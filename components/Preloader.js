@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 
 export default function Preloader() {
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
   const isAdminRoute = pathname?.startsWith('/admin');
+  
+  // Set true initially so it renders instantly during hydration preventing the content flash
+  const [isLoading, setIsLoading] = useState(!isAdminRoute);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     if (isAdminRoute) {
@@ -23,14 +24,31 @@ export default function Preloader() {
       history.scrollRestoration = "manual";
     }
 
-    setIsLoading(true);
+    // We can rely on a specific custom event from the Hero/Content component to dismiss.
+    // We add a fallback timer just in case an image fails to load or no event is emitted.
+    let isMounted = true;
+    let fallbackTimer;
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setIsInitialLoad(false);
-    }, isInitialLoad ? 3000 : 2000); // 4-second cinematic hold on first load, 1 second on subsequent clicks
+    const handleHidePreloader = () => {
+      if (isMounted) {
+        setIsLoading(false);
+        setIsInitialLoad(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    // Listen for custom event explicitly signaled mechanically by components
+    window.addEventListener('heroImagesLoaded', handleHidePreloader);
+
+    // Fallback if the component doesn't emit the event (like navigation to Contact page)
+    fallbackTimer = setTimeout(() => {
+      handleHidePreloader();
+    }, isInitialLoad ? 4000 : 2000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('heroImagesLoaded', handleHidePreloader);
+      clearTimeout(fallbackTimer);
+    };
   }, [pathname, isAdminRoute, isInitialLoad]);
 
   if (isAdminRoute) return null;
