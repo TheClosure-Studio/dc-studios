@@ -64,7 +64,7 @@ export default function Hero({ images = [] }) {
       <div className="relative z-20 flex-1 flex flex-col justify-between w-full h-full">
         {/* Top Section */}
         <motion.div 
-          className="text-center mt-40 md:mt-40"
+          className="text-center mt-60 md:mt-40"
           style={{ y: textY, opacity: textOpacity }}
         >
           <motion.h1 
@@ -93,15 +93,15 @@ export default function Hero({ images = [] }) {
           transition={{ delay: 0.9, duration: 1.0, ease: "easeInOut" }}
         >
           {/* Column 1 */}
-          <div className="flex flex-col items-center justify-end text-center md:border-r border-white/30 md:pr-8 py-4">
-            
-            <p className="text-[7px] md:text-xs tracking-[0.2em] text-neutral-200 uppercase mb-2">
+          <div className="flex flex-col items-center justify-end text-center md:border-r border-white/30 md:pr-8 py-4 pb-15 md:pb-0">
+            <p className="text-lg md:text-lg text-neutral-200  mb-2">Get In Touch</p>
+            <p className="text-xs md:text-xs tracking-[0.2em] text-neutral-200 uppercase mb-2">
               We are here to help you to <br/>
               remember the best days
             </p>
             <a 
               href="#contact" 
-              className="inline-block font-serif italic text-xl md:text-2xl text-white hover:text-neutral-300 transition-colors underline underline-offset-2 hover:underline-offset-4 transform hover:scale-105 duration-800"
+              className="inline-block font-antic uppercase text-md md:text-lg text-white hover:text-neutral-300 transition-colors transform hover:scale-95 duration-800 border px-4 py-2 tracking-widest"
             >
               Contact Us
             </a>
@@ -110,7 +110,7 @@ export default function Hero({ images = [] }) {
 
           {/* Column 2 */}
           <div className="md:flex flex-col items-center justify-end text-center md:px-12 py-4 hidden">
-            <p className="font-serif italic text-xl md:text-2xl lg:text-xl text-white leading-relaxed md:leading-[1.6] font-light">
+            <p className="font-serif italic text-xl md:text-2xl lg:text-2xl text-white leading-relaxed md:leading-[1.6] font-light tracking-wide">
               Because every picture should be unique.
               Making your special day. We will make a
               wonderful story
@@ -119,16 +119,16 @@ export default function Hero({ images = [] }) {
 
           {/* Column 3 */}
           <div className="md:flex flex-col items-center justify-end text-center md:border-l border-white/30 md:pl-8 py-4 hidden">
-
+<p className="text-[7px] md:text-lg text-neutral-200  mb-2">Our Portfolio</p>
             <p className="text-[10px] md:text-xs tracking-[0.2em] text-neutral-200 uppercase mb-2">
               They are the memories.<br/>
               Real life, real memories
             </p>
             <a 
-              href="#gallery" 
+              href="/portfolio" 
               className="inline-block font-serif italic text-xl md:text-2xl text-white hover:text-neutral-300 transition-colors underline underline-offset-2 hover:underline-offset-4 transform hover:scale-105 duration-800"
             >
-              View Gallery
+              View Portfolio
             </a>
           </div>
         </motion.div>

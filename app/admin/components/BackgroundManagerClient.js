@@ -195,7 +195,6 @@ export default function BackgroundManagerClient({
                   </div>
                   <div className="p-4 bg-white flex-1 flex flex-col">
                     <h3 className="font-semibold text-black truncate">{displayTitle}</h3>
-                    <p className="text-xs text-neutral-500 mt-1 line-clamp-2" title={displayDesc}>{displayDesc}</p>
                   </div>
                 </div>
               );

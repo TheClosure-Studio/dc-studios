@@ -15,7 +15,7 @@ export default function AdminLogin() {
   }, [state, router]);
 
   return (
-    <div className="min-h-screen min-w-screen absolute top-0 left-0 bg-neutral-950 flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-9999 bg-neutral-950 flex items-center justify-center p-6">
       <div className="w-full max-w-md p-8 bg-neutral-900 rounded-lg border border-neutral-800 shadow-2xl">
         <h1 className="text-3xl font-serif text-white mb-2 text-center">Admin Login</h1>
         <p className="text-neutral-400 text-center mb-8 font-display">Sign in to manage the gallery.</p>

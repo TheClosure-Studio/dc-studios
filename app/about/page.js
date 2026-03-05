@@ -2,15 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import AnimatedText from "../../components/AnimateText";
 import { Reveal } from "../../components/Reveal";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { FAQAccordion } from "../../components/FAQAccordion";
 import { supabase } from "../../lib/supabase";
-import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
+import ScrollMarquee from "../../components/ScrollMarquee";
 
 const faqs = [
   {
@@ -33,22 +34,34 @@ const faqs = [
 
 export default function AboutPage() {
   const [heroBg, setHeroBg] = useState("/christian-bowen-I0ItPtIsVEE-unsplash.jpg");
-  const [contentBg, setContentBg] = useState("/freestocks-ux53SGpRAHU-unsplash.jpg");
+  const [statementBg, setStatementBg] = useState("/freestocks-ux53SGpRAHU-unsplash.jpg");
+  const [bioBg, setBioBg] = useState("/freestocks-ux53SGpRAHU-unsplash.jpg");
+  const containerRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
     async function loadBgs() {
       const { data } = await supabase
         .from('backgrounds')
         .select('*')
-        .in('category', ['aboutBgs', 'aboutBgs2'])
+        .in('category', ['aboutBgs', 'aboutBgs2', 'aboutBgs3'])
         .order('created_at', { ascending: false });
         
       if (data) {
         const bg1Data = data.find(b => b.category === 'aboutBgs');
         const bg2Data = data.find(b => b.category === 'aboutBgs2');
+        const bg3Data = data.find(b => b.category === 'aboutBgs3');
         
         if (bg1Data) setHeroBg(bg1Data.image_url);
-        if (bg2Data) setContentBg(bg2Data.image_url);
+        if (bg2Data) setStatementBg(bg2Data.image_url);
+        if (bg3Data) setBioBg(bg3Data.image_url);
       }
     }
     loadBgs();
@@ -60,7 +73,7 @@ export default function AboutPage() {
       
       <main>
         {/* Cinematic Hero */}
-        <section className="relative w-full min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+        <section ref={containerRef} className="relative w-full min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -75,22 +88,24 @@ export default function AboutPage() {
               sizes="100vw"
               className="object-cover" 
             />
-             <div className="absolute inset-0 bg-linear-to-t from-neutral-900 via-black/40 to-black/20" />
           </motion.div>
           <div className="absolute inset-0 bg-linear-to-t from-neutral-900 from-0% via-black/50 via-10% to-black/50 to-100%" />
           
-          <div className="relative z-10 text-center max-w-4xl pt-20">
+          <motion.div 
+            className="relative z-10 text-center max-w-4xl pt-20"
+            style={{ y: textY, opacity: textOpacity }}
+          >
             <Reveal>
-              <h3 className="text-sm font-bold uppercase tracking-[0.3em] text-neutral-400 mb-6">The Studio</h3>
+              <h3 className="text-sm font-bold uppercase tracking-[0.3em] text-neutral-400 mb-6">Dc Studios</h3>
               <AnimatedText 
-                text="Crafting Timeless Narratives" 
-                className="font-serif text-4xl md:text-6xl lg:text-8xl leading-tight mb-6 lg:mb-8 text-white drop-shadow-xl" 
+                text="About Us" 
+                className="font-antic uppercase text-4xl md:text-6xl leading-tight mb-1 lg:mb-4 text-white tracking-[0.2em]" 
               />
-              <p className="text-neutral-300 font-display text-base md:text-xl leading-relaxed">
-                We believe that photography is more than capturing a moment; it's about preserving a feeling.
+              <p className="text-neutral-400 text-xs md:text-sm leading-relaxed uppercase tracking-[0.2em] ">
+                We will save your every memory
               </p>
             </Reveal>
-          </div>
+          </motion.div>
         </section>
 
         {/* Section 1: Intro Text Split */}
@@ -98,21 +113,21 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 md:gap-8 items-center w-full">
             <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center px-4 border-b md:border-b-0 md:border-r border-neutral-200 pb-16 md:pb-0 md:pr-16">
               <Reveal>
-                <h2 className="font-antic text-4xl md:text-5xl lg:text-[42px] leading-[1.3] text-neutral-800 uppercase tracking-widest mb-10">
-                  We are here to<br />
-                  help you to<br />
-                  remember the<br />
+                <h2 className="font-antic text-2xl md:text-5xl lg:text-[42px] leading-[1.3] text-black uppercase tracking-widest mb-10">
+                  We are here to <br className="hidden md:block"/>
+                  help you to <br className="hidden md:block"/>
+                  remember the <br className="hidden md:block"/>
                   best days
                 </h2>
-                <h3 className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-700">
                   Heart of best memories
                 </h3>
               </Reveal>
             </div>
             
-            <div className="w-full md:w-1/2 flex flex-col justify-center px-4 md:pl-16 pt-10 md:pt-0">
+            <div className="w-full md:w-1/2 flex flex-col justify-center md:px-4 md:pl-16 pt-5 md:pt-0">
               <Reveal>
-                <div className="font-display text-sm lg:text-[15px] text-neutral-800 leading-[1.8] space-y-8">
+                <div className="font-display text-md lg:text-[15px] text-neutral-900 space-y-8">
                   <p>
                     I believe the most important element to be captured in a photograph is emotion. The more emotional the shot is, the more it appeals to our senses, and the greater the connection we feel to it. If a picture conveys emotion &ndash; whether it's happiness, surprise, sorrow &ndash; it is successful. Photography has become my passion and source of happiness to capture emotion and personality, vibes and feelings; things you can't see, but surely feel.
                   </p>
@@ -120,7 +135,7 @@ export default function AboutPage() {
                     The connection with subject is what I love most about my job. That combined with photography, makes this the perfect job for me.
                   </p>
                   <div className="pt-8">
-                    <h4 className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-800 leading-[2.5]">
+                    <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-black">
                       We are here to help you to<br />
                       remember the best days
                     </h4>
@@ -133,19 +148,19 @@ export default function AboutPage() {
 
         {/* Section 2: Black Banner & Image Split */}
         <section className="w-full flex flex-col md:flex-row bg-black">
-          <div className="w-full md:w-1/2 text-white flex flex-col justify-center items-center lg:items-start p-16 lg:p-24 min-h-[500px]">
+          <div className="w-full md:w-1/2 text-white flex flex-col justify-center items-center lg:items-start p-0 lg:p-24 min-h-[400px]">
             <Reveal>
-              <h2 className="font-antic text-3xl md:text-4xl lg:text-[42px] leading-[1.4] uppercase tracking-widest text-center lg:text-left text-neutral-200">
-                Make a statement<br />
-                through every picture.<br />
-                We will make a<br />
+              <h2 className="font-antic text-3xl md:text-4xl lg:text-[42px] leading-[1.4] uppercase tracking-widest text-center lg:text-left text-neutral-100">
+                Make a statement <br className="hidden md:block"/>
+                through every picture. <br className="hidden md:block"/>
+                We will make a <br className="hidden md:block"/>
                 wonderful story
               </h2>
             </Reveal>
           </div>
           <div className="w-full md:w-1/2 relative min-h-[400px] lg:min-h-[600px]">
              <Image 
-                src="/christian-bowen-I0ItPtIsVEE-unsplash.jpg" // High contrast portfolio image
+                src={statementBg} // Tied to About - II
                 alt="Statement Piece"
                 fill
                 className="object-cover"
@@ -153,15 +168,27 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* Marquee Section (Just like Home page) */}
+        <div className="hidden md:block">
+          <ScrollMarquee
+            line1="We will make a wonderful story"
+            line2="Make a statement through every picture"
+          />
+        </div>
+        <AnimatedText 
+          text="We will make a wonderful story. Make a statement through every picture"  
+          className="text-black w-full text-center text-4xl font-antic uppercase px-5 py-20 pb-30 md:hidden"
+        />
+
         {/* Section 3: Photographer Bio */}
         <section className="bg-[#f2f1ec] w-full pt-16 md:pt-0">
           <div className="flex flex-col lg:flex-row w-full">
             <div className="w-full lg:w-1/2 relative min-h-[500px] md:min-h-[700px] lg:min-h-[900px]">
                <Image 
-                  src={contentBg} // Tied to the backend Backgrounds uploader
+                  src={bioBg} // Tied to About - III
                   alt="Photographer Portrait"
                   fill
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  className="object-cover transition-all duration-1000"
                 />
             </div>
             
@@ -207,7 +234,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="mb-12 lg:mb-16 text-center">
                 <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-neutral-500 mb-4">Inquiries</h3>
-                <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black">Frequently Asked Questions</h2>
+                <h2 className="font-antic uppercase text-3xl md:text-5xl lg:text-6xl text-black">Frequently Asked Questions</h2>
               </div>
             </Reveal>
             
@@ -221,13 +248,13 @@ export default function AboutPage() {
         <section className="py-32 bg-neutral-100 px-6">
           <div className="max-w-4xl mx-auto text-center">
             <Reveal>
-              <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black mb-6 lg:mb-8">Let's Create Together</h2>
+              <h2 className="font-antic uppercase text-3xl md:text-5xl lg:text-6xl text-black mb-6 lg:mb-8">Let's Create Together</h2>
               <p className="text-neutral-600 font-display text-base md:text-lg mb-10 lg:mb-12">
                 Have more questions or ready to reserve your date? We'd love to hear from you.
               </p>
               <div className="mt-12">
               <Link href="/contact" className="px-8 py-4 bg-black text-white rounded-full font-medium tracking-wide hover:bg-neutral-800 transition inline-flex items-center gap-3 group">
-                Let's Connect <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                Contact Us <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             </Reveal>

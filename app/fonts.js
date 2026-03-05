@@ -1,4 +1,4 @@
-import { Instrument_Serif, Funnel_Display, Antic_Didone } from "next/font/google";
+import { Instrument_Serif, Antic_Didone, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 
 // Google Fonts - All fonts loaded from Google Fonts
@@ -9,7 +9,7 @@ export const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
-export const funnelDisplay = Funnel_Display({
+export const funnelDisplay = Space_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],

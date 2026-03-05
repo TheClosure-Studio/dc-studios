@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 
+import Image from "next/image";
+
 export default function Preloader() {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/admin');
@@ -11,6 +13,7 @@ export default function Preloader() {
   // Set true initially so it renders instantly during hydration preventing the content flash
   const [isLoading, setIsLoading] = useState(!isAdminRoute);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     if (isAdminRoute) {
@@ -31,8 +34,12 @@ export default function Preloader() {
 
     const handleHidePreloader = () => {
       if (isMounted) {
-        setIsLoading(false);
-        setIsInitialLoad(false);
+        setIsExiting(true);
+        // Wait for the "Coverer" animation to complete before unmounting
+        setTimeout(() => {
+          setIsLoading(false);
+          setIsInitialLoad(false);
+        }, 1200); // Duration should match the coverer animation
       }
     };
 
@@ -42,7 +49,7 @@ export default function Preloader() {
     // Fallback if the component doesn't emit the event (like navigation to Contact page)
     fallbackTimer = setTimeout(() => {
       handleHidePreloader();
-    }, isInitialLoad ? 4000 : 2000);
+    }, isInitialLoad ? 4000 : 2500);
 
     return () => {
       isMounted = false;
@@ -58,25 +65,65 @@ export default function Preloader() {
       {isLoading && (
         <motion.div
           key="preloader"
-          // Starts visible and fully covering the screen
-          initial={{ opacity: 1, y: 0 }}
-          // Exits by sliding beautifully up out of the viewport
+          initial={{ opacity: 1 }}
           exit={{ 
-            y: "-100vh", 
-            transition: { duration: 1, ease: [0.76, 0, 0.24, 1] }
+            opacity: 0,
+            transition: { duration: 0.8, ease: "easeInOut", delay: 0.2 }
           }}
-          className="fixed inset-0 z-100 flex items-center justify-center bg-white"
+          className="fixed inset-0 z-9999 flex items-center justify-center bg-[#02020a]"
         >
-          <div className="overflow-hidden">
+          {/* Background Starry Image */}
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src="/dc-bg.jpg" 
+              alt="Background" 
+              fill 
+              priority 
+              className="object-cover opacity-60"
+            />
+          </div>
+
+          <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center overflow-hidden z-10">
+            {/* The static logo image */}
+            <div className="relative w-48 h-48 md:w-56 md:h-56">
+              <Image 
+                src="/dc.jpeg" 
+                alt="DC Studios Logo" 
+                fill 
+                priority 
+                className="object-contain "
+              />
+            </div>
+
+            {/* Revealer Curtain: Slides DOWN to reveal the logo */}
             <motion.div
-              // Text slides up subtly while fading in to establish the brand
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-3xl md:text-5xl font-serif uppercase animate-shimmer"
-            >
-              <span className="font-sedgwick normal-case mr-4">DC Studios</span> 
-            </motion.div>
+              initial={{ y: 0 }}
+              animate={{ y: "100%" }}
+              transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.5 }}
+              className="absolute inset-0 bg-[#02020a]"
+            />
+
+            {/* Shutter Coverer: Slides DOWN from top to cover the logo when exiting */}
+            <motion.div
+              initial={{ y: "-100%" }}
+              animate={isExiting ? { y: 0 } : { y: "-100%" }}
+              transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+              className="absolute inset-0 bg-[#02020a] z-20"
+            />
+          </div>
+
+          {/* Line Loader: Positioned slightly below the logo area */}
+          <div className="absolute top-[calc(50%+120px)] md:top-[calc(50%+160px)] w-40 md:w-48 overflow-hidden h-px bg-white/10 z-10">
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: "0%" }}
+              transition={{ 
+                duration: 2.5, 
+                ease: "easeInOut",
+                delay: 1.0 
+              }}
+              className="w-full h-full bg-white"
+            />
           </div>
         </motion.div>
       )}

@@ -9,12 +9,14 @@ export default async function BackgroundsPage() {
     .select('*')
     .order('created_at', { ascending: false });
 
-  const allItems = {
-    aboutBgs:   (bgs || []).filter(b => b.category === 'aboutBgs'),
-    aboutBgs2:  (bgs || []).filter(b => b.category === 'aboutBgs2'),
-    contactBgs: (bgs || []).filter(b => b.category === 'contactBgs'),
-    servicesBg: (bgs || []).filter(b => b.category === 'servicesBg'),
-  };
+  // Dynamically group backgrounds by category
+  const allItems = (bgs || []).reduce((acc, bg) => {
+    if (!acc[bg.category]) {
+      acc[bg.category] = [];
+    }
+    acc[bg.category].push(bg);
+    return acc;
+  }, {});
 
   return <BackgroundsClient allItems={allItems} />;
 }

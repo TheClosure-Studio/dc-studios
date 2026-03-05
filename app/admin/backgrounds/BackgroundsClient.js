@@ -7,10 +7,18 @@ import { Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const CATEGORY_OPTIONS = [
+  { label: 'New Born',  value: 'newBorn' },
+  { label: 'Maternity', value: 'maternity' },
+  { label: 'Family',  value: 'family' },
+  { label: 'Kids/Toddlers',  value: 'kidsToddlers' },
+  { label: 'Cake Smash',  value: 'cakeSmash' },
+  { label: 'Child & Sibling',  value: 'childSibling' },
   { label: 'About - I',  value: 'aboutBgs' },
   { label: 'About - II', value: 'aboutBgs2' },
+  { label: 'About - III',       value: 'aboutBgs3' },
   { label: 'Contact',    value: 'contactBgs' },
-  { label: 'Services',   value: 'servicesBg' },
+  { label: 'Testimonials - I', value: 'testimonials'},
+  { label: 'Testimonials - II', value: 'testimonials2'},
 ];
 
 export default function BackgroundsClient({ allItems }) {
@@ -164,7 +172,6 @@ export default function BackgroundsClient({ allItems }) {
                   </div>
                   <div className="px-4 py-3 bg-white flex-1 flex items-center justify-between">
                     <span className="text-sm font-medium text-black truncate">{label}</span>
-                    <span className="text-xs text-neutral-400 truncate ml-2">{src.split('/').pop()}</span>
                   </div>
                 </div>
               ))}

@@ -1,11 +1,60 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import AnimatedText from "./AnimateText";
 import { Reveal } from "./Reveal";
+import { ArrowUpRight } from "lucide-react";
+
+// Each image card gets its own scroll-driven Y translation (no scale, just position)
+// Service card for the mobile/medium grid
+function ServiceGridCard({ service, label }) {
+  return (
+    <Link href={`/services/${service.slug}`} className="group flex flex-col w-full text-center">
+      <div className="relative aspect-3/4 overflow-hidden">
+        <Image
+          src={service.image_url}
+          alt={service.title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 22vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
+      <div className="mt-4">
+        <p className="font-antic text-2xl md:text-base text-black tracking-[0.25em] group-hover:opacity-60 transition-opacity uppercase">
+          {label}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+// Each image card gets its own scroll-driven Y translation (for desktop)
+function ServiceScrollCard({ service, label, yTransform }) {
+  return (
+    <motion.div style={{ y: yTransform }} className="shrink-0 w-[14vw] text-center">
+      <Link href={`/services/${service.slug}`} className="group flex flex-col w-full">
+        <div className="relative w-full aspect-3/4 overflow-hidden">
+          <Image
+            src={service.image_url}
+            alt={service.title}
+            fill
+            sizes="16vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        </div>
+        <div className="mt-4">
+          <p className="font-antic text-base text-black tracking-[0.15em] group-hover:opacity-60 transition-opacity uppercase font-bold">
+            {label}
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function Services({ services = [] }) {
   const containerRef = useRef(null);
@@ -15,65 +64,67 @@ export default function Services({ services = [] }) {
     offset: ["start end", "end start"],
   });
 
-  // Alternating movement vectors: odd items go up noticeably, even items drift slightly down
-  const yUp = useTransform(scrollYProgress, [0, 1], [20, -80]);
-  const yDown = useTransform(scrollYProgress, [0, 1], [-0, 40]);
+  // Alternating scroll directions and speeds — even cards go up, odd go down
+  const y0 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const y4 = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const y5 = useTransform(scrollYProgress, [0, 1], [0, 70]);
 
-  const [isMobile, setIsMobile] = useState(true); // default to true to prevent initial clash
-  
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize(); // Initialize on mount
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const yTransforms = [y0, y1, y2, y3, y4, y5];
+
+  // Helper to format short labels from full titles (e.g. "Maternity Session" -> "Maternity")
+  const getShortLabel = (title) => {
+    if (!title) return "";
+    return title.replace(/ Session$/i, '').replace(/ Photography$/i, '');
+  };
 
   return (
-    <section id="services" ref={containerRef} className="py-24 md:py-40 bg-white px-6 relative overflow-hidden">
-      {/* Decorative Flowers */}
-      <div className="absolute top-0 -left-16 w-44 md:w-64 aspect-square pointer-events-none opacity-60 mix-blend-multiply z-0">
-        <Image src="/flower1.png" alt="Floral decoration top left" fill className="object-contain object-top-left rotate-45" />
-      </div>
-      <div className="absolute bottom-20 md:bottom-0 right-0 w-44 md:w-96 aspect-square pointer-events-none opacity-60 mix-blend-multiply z-0">
-        <Image src="/flower2.png" alt="Floral decoration bottom right" fill className="object-contain object-bottom-right" />
+    <section ref={containerRef} id="services" className="py-20 md:py-32 bg-white overflow-hidden">
+      
+      {/* Heading block */}
+      <div className="max-w-3xl mx-auto px-6 text-center mb-16 md:mb-24">
+        <Reveal>
+          <h2 className="font-antic text-4xl md:text-5xl lg:text-6xl text-black uppercase leading-[1.05] tracking-widest mb-10">
+            Because every picture should be unique
+          </h2>
+        </Reveal>
+        <Reveal>
+          <Link
+            href="/services"
+            className="inline-block border border-black bg-black text-white tracking-[0.3em] uppercase py-4 px-10 hover:bg-white hover:text-black transition-colors duration-300 text-sm"
+          >
+            View All Services
+          </Link>
+        </Reveal>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <Reveal>
-          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-neutral-500 mb-4">Our Expertise</h3>
-          <AnimatedText text="Our Services" className="font-antic text-4xl md:text-6xl mb-16 text-black uppercase" />
-        </Reveal>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-16 md:gap-8 lg:gap-12 pb-16">
+      {/* Mobile/Medium Grid Layout */}
+      <div className="lg:hidden md:px-12 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
+        {services.map((service, idx) => (
+          <ServiceGridCard
+            key={idx}
+            service={service}
+            label={getShortLabel(service.title)}
+          />
+        ))}
+      </div>
+
+      {/* Desktop Staggered Scroll Layout */}
+      <div className="hidden lg:flex justify-center px-10 relative bottom-0">
+        <div className="flex gap-4 items-center">
           {services.map((service, idx) => (
-            <motion.div 
+            <ServiceScrollCard
               key={idx}
-              style={{ y: isMobile ? 0 : (idx % 2 === 0 ? yUp : yDown) }}
-              className="h-full"
-            >
-              <Reveal>
-                <div className="group border-t border-neutral-200 pt-8 hover:border-neutral-600 transition-colors duration-500 cursor-pointer h-full flex flex-col">
-                  <AnimatedText text={service.title} className="font-serif text-3xl mb-4 group-hover:text-black transition-colors" />
-                  <p className="text-neutral-600 font-display leading-relaxed mb-6 grow">{service.desc}</p>
-                  
-                  <div className="relative w-full h-56 md:h-64 overflow-hidden mb-6">
-                    <Image 
-                      src={service.image_url} 
-                      alt={service.title} 
-                      fill 
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                      <ArrowRight className="text-white transform translate-x-4 group-hover:translate-x-0 opacity-0 group-hover:opacity-100 transition-all duration-500" size={32} />
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            </motion.div>
+              service={service}
+              label={getShortLabel(service.title)}
+              yTransform={yTransforms[idx % yTransforms.length]}
+            />
           ))}
         </div>
       </div>
+
     </section>
   );
 }
