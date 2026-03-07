@@ -76,7 +76,7 @@ export default function ManageReviewsClient({ initialReviews }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
         {/* Add Review Form */}
         <div className="lg:col-span-1">
-          <div className="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm md:sticky md:top-24">
+          <div className="bg-white border border-neutral-200 p-6 shadow-sm md:sticky md:top-24">
             <h2 className="text-xl font-serif mb-6 text-black">Add Review</h2>
 
             {error && (
@@ -145,7 +145,7 @@ export default function ManageReviewsClient({ initialReviews }) {
             </div>
           ) : (
             initialReviews.map((review) => (
-              <div key={review.id} className="group bg-white border border-neutral-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div key={review.id} className="group bg-white border border-neutral-200 p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">

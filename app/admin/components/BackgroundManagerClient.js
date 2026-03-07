@@ -125,14 +125,14 @@ export default function BackgroundManagerClient({
         <div className="max-w-xl">
           <h1 className="text-4xl font-serif mb-2 text-black">{title}</h1>
         </div>
-        <div className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+        <div className="bg-black text-white px-4 py-2 text-sm font-medium whitespace-nowrap">
           {items.length} Images
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
         <div className="lg:col-span-1">
-          <div className="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm md:sticky md:top-24">
+          <div className="bg-white border border-neutral-200  p-6 shadow-sm md:sticky md:top-24">
             <h2 className="text-xl font-serif mb-6 text-black">Upload New</h2>
             
             {error && (
@@ -174,7 +174,7 @@ export default function BackgroundManagerClient({
 
               <div>
                 <label className="block text-sm font-medium text-black mb-2">Image File</label>
-                <div className={`relative border-2 border-dashed rounded-lg overflow-hidden bg-neutral-50 text-center hover:bg-neutral-100 transition-colors group ${previewUrl ? 'border-black' : 'border-neutral-300 hover:border-black'}`}>
+                <div className={`relative border-2 border-dashed overflow-hidden bg-neutral-50 text-center hover:bg-neutral-100 transition-colors group ${previewUrl ? 'border-black' : 'border-neutral-300 hover:border-black'}`}>
                   <input 
                     type="file" 
                     name="image"
@@ -220,7 +220,7 @@ export default function BackgroundManagerClient({
               const displayDesc = item.desc || imgPath.split('/').pop();
 
               return (
-                <div key={idx} className="group relative bg-white rounded-lg overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div key={idx} className="group relative bg-white overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
                   <div className="relative h-56 w-full bg-neutral-100 shrink-0">
                     <Image 
                       src={imgPath}

@@ -116,7 +116,7 @@ export default function AdminUploadClient({ categories = [] }) {
         <h1 className="text-4xl font-serif mb-2 text-black">Upload to Gallery</h1>
       </div>
 
-      <div className="bg-white border border-neutral-200 rounded-xl p-8 shadow-sm">
+      <div className="bg-white border border-neutral-200 p-8 shadow-sm">
         
         {error && (
           <div className="bg-red-50 text-red-600 border border-red-200 px-4 py-3 rounded-md mb-6 text-sm">

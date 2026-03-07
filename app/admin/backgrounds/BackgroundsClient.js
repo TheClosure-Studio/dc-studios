@@ -132,7 +132,7 @@ export default function BackgroundsClient({ allItems }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
         {/* Upload Form */}
         <div className="lg:col-span-1">
-          <div className="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm md:sticky md:top-24">
+          <div className="bg-white border border-neutral-200 p-6 shadow-sm md:sticky md:top-24">
             <h2 className="text-xl font-serif mb-6 text-black">Upload New</h2>
 
             {error && (
@@ -208,7 +208,7 @@ export default function BackgroundsClient({ allItems }) {
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
               {allDisplayItems.map(({ src, category, label, id }, idx) => (
-                <div key={idx} className="group relative bg-white rounded-lg overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div key={idx} className="group relative bg-white overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
                   <div className="relative h-44 w-full bg-neutral-100 shrink-0">
                       <Image src={src} alt={label} fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
