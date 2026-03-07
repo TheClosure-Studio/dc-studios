@@ -240,8 +240,19 @@ export default function BackgroundManagerClient({
                       </button>
                     </div>
                   </div>
-                  <div className="p-4 bg-white flex-1 flex flex-col">
+                  <div className="p-4 bg-white flex-1 flex items-center justify-between gap-2">
                     <h3 className="font-semibold text-black truncate">{displayTitle}</h3>
+                    {/* Mobile/Tablet persistent delete button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(imgPath, item.id);
+                      }}
+                      className="lg:hidden p-2 bg-red-50 text-red-500 rounded-full active:bg-red-100 transition-colors"
+                      title="Delete Image"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               );

@@ -122,9 +122,22 @@ export default function AdminManageClient({ initialItems }) {
                 </button>
               </div>
             </div>
-            <div className="p-4 bg-white">
-              <h3 className="font-medium text-sm text-black truncate">{item.title}</h3>
-              <p className="text-xs text-neutral-500 mt-1 truncate">{item.category}</p>
+            <div className="p-4 bg-white flex items-start justify-between gap-2">
+              <div className="flex-1 truncate">
+                <h3 className="font-medium text-sm text-black truncate">{item.title}</h3>
+                <p className="text-xs text-neutral-500 mt-1 truncate">{item.category}</p>
+              </div>
+              {/* Mobile/Tablet persistent delete button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(item.id);
+                }}
+                className="lg:hidden p-2 bg-red-50 text-red-500 rounded-full active:bg-red-100 transition-colors"
+                title="Delete Image"
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
         ))}

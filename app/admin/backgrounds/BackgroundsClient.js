@@ -2,9 +2,10 @@
 
 import { useState, useRef, useTransition } from 'react';
 import Image from 'next/image';
-import { uploadBackground, deleteBackground } from '../actions/backgrounds';
+import { saveBackgroundRecord, deleteBackground } from '../actions/backgrounds';
 import { Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const CATEGORY_OPTIONS = [
   { label: 'New Born',  value: 'newBorn' },
@@ -209,7 +210,7 @@ export default function BackgroundsClient({ allItems }) {
               {allDisplayItems.map(({ src, category, label, id }, idx) => (
                 <div key={idx} className="group relative bg-white rounded-lg overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
                   <div className="relative h-44 w-full bg-neutral-100 shrink-0">
-                    <Image src={src} alt={label} fill className="object-cover" />
+                      <Image src={src} alt={label} fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => handleDelete(src, category, id)}
@@ -219,8 +220,19 @@ export default function BackgroundsClient({ allItems }) {
                       </button>
                     </div>
                   </div>
-                  <div className="px-4 py-3 bg-white flex-1 flex items-center justify-between">
+                  <div className="px-4 py-3 bg-white flex-1 flex items-center justify-between gap-2">
                     <span className="text-sm font-medium text-black truncate">{label}</span>
+                    {/* Mobile/Tablet persistent delete button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(src, category, id);
+                      }}
+                      className="lg:hidden p-2 bg-red-50 text-red-500 rounded-full active:bg-red-100 transition-colors"
+                      title="Delete Background"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               ))}
