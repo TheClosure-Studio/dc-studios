@@ -26,14 +26,14 @@ export default function FloatingContact() {
       />
 
       <a
-        href="tel:+91XXXXXXXXXX"
+        href="tel:+919573717647"
         className="flex items-center justify-center w-14 h-14 bg-black text-white rounded-full shadow-xl hover:bg-neutral-800 transition-colors group relative z-10"
         aria-label="Call Us"
       >
         <Phone size={22} className="group-hover:scale-110 transition-transform duration-300" />
         
         {/* Tooltip */}
-        <span className="absolute right-full mr-4 bg-black text-white px-3 py-1.5 rounded text-[10px] tracking-[0.2em] uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-sans">
+        <span className="absolute right-full mr-4 bg-black text-white px-3 py-1.5 rounded text-[10px] tracking-[0.2em] uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
           Contact Us
         </span>
       </a>

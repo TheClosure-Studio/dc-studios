@@ -29,11 +29,13 @@ export default function Contact() {
             </h2>
           </div>
           <div className="flex flex-col lg:flex-row gap-5 items-center w-full justify-center">
+
              <div className="bg-neutral-900 md:h-[380px] overflow-hidden p-6 md:p-10 text-white font-display border border-neutral-800/50 transform transition-all duration-300 group md:w-1/2 justify-center">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12 w-full">
               
               {/* Profile Avatar */}
               <div className="relative w-36 h-36 md:w-44 md:h-44 shrink-0 mx-auto md:mx-0">
+                
                 <div className="w-full h-full rounded-full overflow-hidden relative bg-black border border-neutral-700">
                   <Image 
                     src="/dc-image.jpg" // We can replace this with actual logo if needed
@@ -57,7 +59,7 @@ export default function Contact() {
 
                 {/* Stats row - Desktop */}
                 <div className="hidden md:flex gap-8 mb-4">
-                  <p><span className="font-bold text-white">753</span> <span className="text-neutral-300">posts</span></p>
+                  <p><span className="font-bold text-white">750+</span> <span className="text-neutral-300">posts</span></p>
                 </div>
 
                 {/* Bio */}
@@ -66,14 +68,6 @@ export default function Contact() {
                   <p className="mb-2 max-w-xl text-white">
                     Exclusively for Newborn, toddlers, maternity shoots and also conceptual fashion shoots.
                   </p>
-                  <div className="flex flex-col md:flex-row gap-2 md:gap-4 font-medium text-sm">
-                    <Link href="https://g.page/dc-studios-tirupati" target="_blank" className="hover:underline flex items-center justify-center md:justify-start gap-1 text-neutral-200">
-                      <span className="text-blue-400 font-bold">🔗</span> g.page/dc-studios-tirupati
-                    </Link>
-                    <span className="hover:underline flex items-center justify-center md:justify-start gap-1 text-neutral-200 cursor-pointer">
-                      <span>@</span> dc.dreamcapturestudio
-                    </span>
-                  </div>
                 </div>
 
                 
@@ -83,7 +77,7 @@ export default function Contact() {
                   <Link href="https://instagram.com/dc.dreamcapturestudio" target="_blank" className="flex-1 md:flex-none px-12 py-2 bg-[#4460f1] hover:bg-[#3450e1] font-semibold text-sm rounded-lg text-white text-center transition-colors">
                     Follow
                   </Link>
-                  <Link href="mailto:hello@dcstudios.com" className="flex-1 md:flex-none px-12 py-2 bg-[#2a2a2a] hover:bg-[#333333] border border-[#333333] transition-colors font-semibold text-sm rounded-lg text-white text-center">
+                  <Link href="https://instagram.com/dc.dreamcapturestudio" className="flex-1 md:flex-none px-12 py-2 bg-[#2a2a2a] hover:bg-[#333333] border border-[#333333] transition-colors font-semibold text-sm rounded-lg text-white text-center">
                     Visit our Instagram
                   </Link>
                 </div>

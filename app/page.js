@@ -55,24 +55,34 @@ export default async function Home() {
 
   const heroImages = heroData && heroData.length > 0 ? heroData.map(h => h.image_url) : fallbackHeroImages;
   
-  // Merge Services: Primary source is DB, fallback to hardcoded list if empty
-  let services = [];
+  // Merge Services: Match DB items to fallbacks by title, ensuring a full 6-item grid
   const getBaseTitle = (t) => t ? t.replace(/ Session$/i, '').replace(/ Photography$/i, '').trim() : "";
 
-  if (servicesData && servicesData.length > 0) {
-    services = servicesData.map(s => {
-      // Find fallback info to enrich the DB data (e.g. description/slug)
-      // Use normalized titles for matching to handle "Newborn" vs "Newborn Session"
-      const fallback = fallbackServices.find(f => getBaseTitle(f.title) === getBaseTitle(s.title));
+  const services = fallbackServices.map(fallback => {
+    const dbMatch = servicesData?.find(s => getBaseTitle(s.title) === getBaseTitle(fallback.title));
+    if (dbMatch) {
       return {
-        title: s.title,
-        slug: s.slug || fallback?.slug || s.title.toLowerCase().replace(/\s+/g, '-'),
-        desc: s.desc || fallback?.desc || "",
-        image_url: s.image_url
+        title: dbMatch.title || fallback.title,
+        slug: dbMatch.slug || fallback.slug,
+        desc: dbMatch.desc || fallback.desc,
+        image_url: dbMatch.image_url || fallback.image_url
       };
-    });
-  } else {
-    services = fallbackServices;
+    }
+    return fallback;
+  });
+
+  // Also add any DB services that DON'T match a fallback (just in case new categories are added)
+  const unmatchedDbServices = servicesData?.filter(s => 
+    !fallbackServices.some(f => getBaseTitle(f.title) === getBaseTitle(s.title))
+  ).map(s => ({
+    title: s.title,
+    slug: s.slug || s.title.toLowerCase().replace(/\s+/g, '-'),
+    desc: s.desc || "",
+    image_url: s.image_url
+  })) || [];
+
+  if (unmatchedDbServices.length > 0) {
+    services.push(...unmatchedDbServices);
   }
 
   // Define requested sort order
@@ -94,12 +104,25 @@ export default async function Home() {
   const contactBg = bgsData?.find(b => b.category === 'contactBgs')?.image_url || "/freestocks-ux53SGpRAHU-unsplash.jpg";
   const aboutBg2 = bgsData?.find(b => b.category === 'aboutBgs2')?.image_url || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg";
   const fallbackTestimonials = [
+    { 
+      text: "I recently visited DC Studios for a photography session for my baby and the experience was excellent from start to finish. Friendly Environment: The studio has a warm and welcoming atmosphere. Mr. Dileep is approachable, patient, and made me and my family feel comfortable throughout the shoot. Professional Services: DC Studios offers a wide range of services including portrait photography, event coverage, product shoots, and editing packages. The photographers are skilled at guiding poses and using lighting creatively to bring out the best in every shot. Quality & Turnaround: The final images were crisp, well-edited, and delivered promptly. I appreciated the attention to detail in both the photography and post-production work. Value: Pricing felt fair compared to the quality of service. Packages are flexible, making it easy to choose what suits your needs. ✅ Overall: DC Studios combines professionalism with a friendly environment, making it a great choice for anyone looking for high-quality photography services in a comfortable setting.", 
+      author: "REKHA C", 
+      sessionType: "BABY PHOTO SESSION", 
+      image: "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg" 
+    },
     { text: "The maternity shoot made me feel so empowered and beautiful. Every single photo is a treasure.", author: "JESSICA MILLER", sessionType: "MATERNITY SESSION", image: "/toa-heftiba-C-8uOz7GluA-unsplash.jpg" },
     { text: "They captured my newborn's tiny details so perfectly. I cry happy tears every time I look at them.", author: "PRIYA SHARMA", sessionType: "NEWBORN SESSION", image: "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg" },
     { text: "The cake smash session was pure magic. My daughter was so comfortable and the photos are incredible.", author: "ANANYA KAPOOR", sessionType: "CAKE SMASH SESSION", image: "/yuri-li-p0hDztR46cw-unsplash.jpg" },
     { text: "They captured the most natural, beautiful family moments. Absolutely no stiff poses — just real love.", author: "RAHUL & PRIYA PATEL", sessionType: "FAMILY SESSION", image: "/adele-morris-mDiFpFl_jTs-unsplash.jpg" },
   ];
-  const reviews = reviewsData && reviewsData.length > 0 ? reviewsData : fallbackTestimonials;
+  const reviews = reviewsData && reviewsData.length > 0 
+    ? reviewsData.map(r => ({
+        text: r.review_text,
+        author: r.client_name,
+        rating: r.rating || 5, // Pass the star rating
+        sessionType: r.session_type || "CLIENT REVIEW"
+      }))
+    : fallbackTestimonials;
 
   // Merge Gallery: Ensure at least one image per category exists so sections don't disappear
   const uploadedGalleryItems = galleryData || [];

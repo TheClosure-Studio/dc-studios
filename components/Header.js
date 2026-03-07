@@ -6,13 +6,30 @@ import { categories } from "../lib/constants";
 import { Menu, X, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false);
+  const [heroImages, setHeroImages] = useState([]);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const fetchHeroImages = async () => {
+      const { data } = await supabase
+        .from('hero_backgrounds')
+        .select('image_url')
+        .order('display_order', { ascending: true })
+        .limit(2);
+      
+      if (data) {
+        setHeroImages(data.map(item => item.image_url));
+      }
+    };
+    fetchHeroImages();
+  }, []);
 
   const isSolidPage = pathname === '/services' || pathname === '/portfolio' || pathname === '/contact';
 
@@ -35,8 +52,9 @@ export default function Header() {
     <header className="fixed top-0 w-full z-50">
       <div className="md:px-10 px-4 h-20 flex items-center justify-between">
         <div className=" px-1 py-1 rounded">
-          <Link href="/" className={`text-2xl md:text-3xl tracking-wider font-serif transition-colors duration-300 ${isScrolled || isSolidPage ? 'text-black' : 'text-white'}`}>
+          <Link href="/" className={`text-2xl md:text-4xl tracking-wider font-serif transition-colors duration-300 ${isScrolled || isSolidPage ? 'text-black' : 'text-white'}`}>
             <span className="font-sedgwick ">Dc Studios</span>
+            <span className="uppercase font-display text-[9px] block tracking-tight text-right relative bottom-1">Dream Capture</span>
           </Link>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-[13px] tracking-wide font-bold text-neutral-800 bg-neutral-200 px-4 rounded h-10 my-auto uppercase">
@@ -53,7 +71,7 @@ export default function Header() {
                <div className="max-w-7xl mx-auto flex  h-[250px] justify-end">
                     <div className="w-1/3 relative bg-black overflow-hidden group/img">
                      <Image 
-                       src="/nihal-karkala-M5aSbOXeDyo-unsplash.jpg"
+                       src={heroImages[0] || "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg"}
                        alt="Adding Memories"
                        fill
                        className="object-cover opacity-60 group-hover/img:scale-105 transition-transform duration-700"
@@ -100,7 +118,7 @@ export default function Header() {
                   {/* Right Side: Image with Text */}
                   <div className="w-1/3 relative bg-black overflow-hidden group/img">
                      <Image 
-                       src="/klara-kulikova-o1rq5GwVorY-unsplash.jpg"
+                       src={heroImages[1] || heroImages[0] || "/klara-kulikova-o1rq5GwVorY-unsplash.jpg"}
                        alt="Portfolio Highlights"
                        fill
                        className="object-cover opacity-60 group-hover/img:scale-105 transition-transform duration-700"

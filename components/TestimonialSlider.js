@@ -1,33 +1,38 @@
 "use client";
 
-import { useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUp, Star, Quote } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "./Reveal";
 
 export default function TestimonialSlider({ testimonials, staticImages }) {
-  const scrollContainerRef = useRef(null);
-  
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
+
   if (!testimonials || testimonials.length === 0) return null;
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -scrollContainerRef.current.clientWidth, behavior: 'smooth' });
-    }
-  };
+  const nextSlide = useCallback(() => {
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+  }, [testimonials.length]);
 
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: scrollContainerRef.current.clientWidth, behavior: 'smooth' });
-    }
-  };
+  const prevSlide = useCallback(() => {
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  }, [testimonials.length]);
+
+  // Auto-play
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 10000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Use the first two static images if available, otherwise fallback to whatever we have
-  const img1 = staticImages && staticImages.length > 0 ? staticImages[0] : testimonials[0].image;
+  const img1 = staticImages && staticImages.length > 0 ? staticImages[0] : (testimonials[0]?.image || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg");
   const img2 = staticImages && staticImages.length > 1 ? staticImages[1] : (testimonials[1]?.image || img1);
 
   return (
@@ -36,18 +41,15 @@ export default function TestimonialSlider({ testimonials, staticImages }) {
         
         {/* Left Side: Staggered Static Images */}
         <div className="hidden xl:flex w-full xl:w-[45%] relative h-[800px] items-center">
-           {/* Image 1 (Higher, Left) */}
            <div className="absolute left-0 top-0 w-3/5 aspect-[3/4] z-10 shadow-xl overflow-hidden">
              <Image src={img1} alt="Portfolio 1" fill className="object-cover" />
            </div>
-           
-           {/* Image 2 (Lower, Right) */}
            <div className="absolute right-0 bottom-12 w-[60%] aspect-[4/5] z-20 shadow-2xl overflow-hidden">
              <Image src={img2} alt="Portfolio 2" fill className="object-cover" />
            </div>
         </div>
 
-        {/* Right Side: Slider & Heading */}
+        {/* Right Side: Stack Slider */}
         <div className="w-full xl:w-1/2 flex flex-col xl:pl-16 relative z-30">
            <Reveal>
              <h2 className="font-antic tracking-[0.4em] text-sm md:text-base text-black uppercase font-bold mb-16 text-center xl:text-left">
@@ -55,56 +57,104 @@ export default function TestimonialSlider({ testimonials, staticImages }) {
              </h2>
            </Reveal>
 
-           {/* The Scrollable white card area */}
-           <div className="relative w-full shadow-2xl bg-white max-w-xl mx-auto xl:mx-0">
-             
-             {/* Native Horizontal Scroll Container for cards */}
-             <div 
-               ref={scrollContainerRef}
-               className="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar"
-             >
-               {testimonials.map((t, idx) => (
-                 <div key={idx} className="w-full shrink-0 snap-start p-12 lg:p-16 flex flex-col justify-center min-h-[400px]">
-                   <p className="font-serif italic text-lg lg:text-xl text-[#333] leading-loose mb-12">
-                     "{t.text}"
-                   </p>
-                   
-                   <div className="flex items-center gap-6 mt-auto">
-                    
-                      <div>
-                         <h4 className="text-xs tracking-[0.2em] text-black font-bold uppercase mb-2">
-                           {t.author}
-                         </h4>
-                         <p className=" text-[10px] tracking-widest text-neutral-500 uppercase">
-                           {t.sessionType}
-                         </p>
-                      </div>
-                   </div>
+           {/* Stack Container */}
+           <div className="relative w-full min-h-[500px] lg:h-[550px] max-w-xl mx-auto xl:mx-0">
+             <AnimatePresence initial={false} mode="wait">
+               <motion.div
+                 key={currentIndex}
+                 initial={{ 
+                   x: direction > 0 ? 100 : -100, 
+                   opacity: 0,
+                   rotate: direction > 0 ? 5 : -5,
+                   scale: 0.9 
+                 }}
+                 animate={{ 
+                   x: 0, 
+                   opacity: 1,
+                   rotate: 0,
+                   scale: 1 
+                 }}
+                 exit={{ 
+                   x: direction > 0 ? -100 : 100, 
+                   opacity: 0,
+                   rotate: direction > 0 ? -5 : 5,
+                   scale: 0.9 
+                 }}
+                 transition={{ 
+                   type: "spring", 
+                   stiffness: 300, 
+                   damping: 30 
+                 }}
+                 className="absolute inset-0 w-full h-full bg-white shadow-2xl p-8 lg:p-14 flex flex-col justify-center border border-neutral-100"
+               >
+                 <Quote className="text-neutral-100 absolute top-8 left-8 w-24 h-24 -z-10" />
+                 
+                 <p className="font-serif italic text-base lg:text-lg text-[#333] leading-relaxed mb-10 relative z-10 overflow-y-auto no-scrollbar">
+                   "{testimonials[currentIndex].text || testimonials[currentIndex].review_text}"
+                 </p>
+                 
+                 <div className="flex items-center gap-6 mt-auto relative z-10">
+                    <div>
+                       <div className="flex items-center gap-0.5 mb-2">
+                         {[1, 2, 3, 4, 5].map((star) => (
+                           <Star 
+                             key={star} 
+                             size={14} 
+                             className={star <= (testimonials[currentIndex].rating || 5) ? 'text-black fill-black' : 'text-neutral-200'} 
+                           />
+                         ))}
+                       </div>
+                       <h4 className="text-xs tracking-[0.2em] text-black font-bold uppercase mb-2">
+                         {testimonials[currentIndex].author || testimonials[currentIndex].client_name}
+                       </h4>
+                       <p className="text-[10px] tracking-widest text-neutral-500 uppercase">
+                         {testimonials[currentIndex].sessionType || testimonials[currentIndex].session_type || "CLIENT REVIEW"}
+                       </p>
+                    </div>
                  </div>
-               ))}
-             </div>
+               </motion.div>
+             </AnimatePresence>
+
+             {/* Background Stack Decoration */}
+             <div className="absolute inset-0 -z-10 translate-x-4 translate-y-4 bg-white/50 border border-neutral-100 shadow-sm" />
+             <div className="absolute inset-0 -z-20 translate-x-8 translate-y-8 bg-white/30 border border-neutral-100 shadow-sm" />
            </div>
 
-           {/* Controls Box below the card */}
-           <div className="flex justify-center xl:justify-end max-w-xl mx-auto xl:mx-0 w-full mt-10 gap-4 pr-0 xl:pr-12">
-              <button 
-                onClick={scrollLeft}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-sm text-neutral-600"
-              >
-                <ArrowLeft size={20} strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={scrollRight}
-                className="w-14 h-14 bg-white rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-sm text-neutral-600"
-              >
-                <ArrowRight size={20} strokeWidth={1.5} />
-              </button>
+           {/* Controls */}
+           <div className="flex items-center justify-center xl:justify-end max-w-xl mx-auto xl:mx-0 w-full mt-14 gap-8 pr-0 xl:pr-12">
+              <div className="flex gap-2">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setDirection(idx > currentIndex ? 1 : -1);
+                      setCurrentIndex(idx);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === currentIndex ? "bg-black w-6" : "bg-neutral-300 hover:bg-neutral-400"
+                    }`}
+                    aria-label={`Go to testimonial ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <div className="flex gap-4">
+                <button 
+                  onClick={prevSlide}
+                  className="w-14 h-14 bg-white rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-sm text-neutral-600 border border-neutral-100"
+                >
+                  <ArrowLeft size={20} strokeWidth={1.5} />
+                </button>
+                <button 
+                  onClick={nextSlide}
+                  className="w-14 h-14 bg-white rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-sm text-neutral-600 border border-neutral-100"
+                >
+                  <ArrowRight size={20} strokeWidth={1.5} />
+                </button>
+              </div>
            </div>
         </div>
-
       </div>
 
-      {/* Back to top square button in bottom right corner matches mockup */}
       <div className="absolute bottom-12 right-6 md:right-12 z-50">
          <button 
            onClick={scrollToTop}
@@ -114,7 +164,6 @@ export default function TestimonialSlider({ testimonials, staticImages }) {
            <ArrowUp size={20} strokeWidth={1.5} />
          </button>
       </div>
-
     </section>
   );
 }

@@ -16,6 +16,24 @@ import TestimonialSlider from "./TestimonialSlider";
 import MemoriesRow from "./MemoriesRow";
 import HomePortfolioPreview from "./HomePortfolioPreview";
 
+const getSectionImages = (sectionIndex, galleryImages) => {
+  const count = 8;
+  const start = sectionIndex * count;
+  
+  if (!galleryImages || galleryImages.length === 0) {
+    return [];
+  }
+
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    // Cycle through the available gallery images to ensure we always have 8
+    // but with much better variety than just repeating a slice
+    const imageIndex = (start + i) % galleryImages.length;
+    result.push(galleryImages[imageIndex]);
+  }
+  return result;
+};
+
 const ImageCarousel = ({ images }) => {
   const scrollContainerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -149,7 +167,9 @@ const PackageBlock = ({ pkg, index }) => {
   );
 };
 
-export default function ServiceDetail({ slug, serviceTitle, heroImage, detailsData }) {
+export default function ServiceDetail({ slug, serviceTitle, heroImage, detailsData, galleryImages = [] }) {
+  const containerRef = useRef(null);
+
   const { scrollY } = useScroll();
   // Hero section parallax: scroll up faster. 
   // For every 1000px scrolled, the element moves up an extra 400px.
@@ -211,7 +231,14 @@ export default function ServiceDetail({ slug, serviceTitle, heroImage, detailsDa
         {/* Package Blocks Matching Mockups 3, 4, 5 */}
         <section className="relative bg-[#fafafa] z-10">
           {detailsData.packages && detailsData.packages.map((pkg, index) => (
-            <PackageBlock key={index} pkg={pkg} index={index} />
+            <PackageBlock 
+              key={index} 
+              pkg={{
+                ...pkg,
+                images: getSectionImages(index, galleryImages)
+              }} 
+              index={index} 
+            />
           ))}
         </section>
         
@@ -238,7 +265,7 @@ export default function ServiceDetail({ slug, serviceTitle, heroImage, detailsDa
 
         {/* Portfolio Grid (Mockup 3) */}
         <div className="relative z-10">
-          <PortfolioGridButton images={detailsData.portfolioImages} slug={slug} />
+          <PortfolioGridButton images={galleryImages} slug={slug} />
         </div>
 
         {/* Testimonials Slider (Mockup 4) */}

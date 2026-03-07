@@ -2,52 +2,55 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "./Reveal";
-
-const servicesList = [
-  { 
-    title: "Maternity Session", 
-    subtitle: "CELEBRATING MOTHERHOOD",
-    link: "/services/maternity",
-    image: "/toa-heftiba-C-8uOz7GluA-unsplash.jpg"
-  },
-  { 
-    title: "Newborn Session", 
-    subtitle: "TIMELESS & DELICATE",
-    link: "/services/newborn-photography",
-    image: "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg"
-  },
-  { 
-    title: "Baby/Toddler Session", 
-    subtitle: "PURE PERSONALITY",
-    link: "/services/baby-toddler",
-    image: "/yuri-li-p0hDztR46cw-unsplash.jpg"
-  },
-  { 
-    title: "Cake Smash Session", 
-    subtitle: "FIRST BIRTHDAY MAGIC",
-    link: "/services/cake-smash",
-    image: "/freestocks-ux53SGpRAHU-unsplash.jpg"
-  },
-  { 
-    title: "Family Session", 
-    subtitle: "AUTHENTIC CONNECTIONS",
-    link: "/services/family",
-    image: "/adele-morris-mDiFpFl_jTs-unsplash.jpg"
-  },
-  { 
-    title: "Child & Sibling Session", 
-    subtitle: "BONDS THAT LAST FOREVER",
-    link: "/services/child-sibling",
-    image: "/christian-bowen-I0ItPtIsVEE-unsplash.jpg"
-  },
-];
+import { supabase } from "../lib/supabase";
 
 export default function ServiceDarkLinks() {
+  const [servicesList, setServicesList] = useState([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    async function fetchServices() {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*');
+      
+      if (data) {
+        // Defined requested sort order
+        const order = ["Maternity", "Newborn", "Baby/Toddler", "Cake Smash", "Family", "Child & Sibling"];
+        
+        const sortedData = [...data].sort((a, b) => {
+          const indexA = order.indexOf(a.title);
+          const indexB = order.indexOf(b.title);
+          if (indexA === -1 && indexB === -1) return 0;
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          return indexA - indexB;
+        });
+
+        const formatted = sortedData.map(s => {
+          // Special case for newborn slug to match routing
+          let slug = s.slug || s.title.toLowerCase().replace(/\s+/g, '-');
+          if (s.title === "Newborn Session" || s.title === "Newborn") {
+            slug = "newborn-photography";
+          }
+
+          return {
+            title: s.title,
+            subtitle: s.subtitle || s.desc?.substring(0, 30).toUpperCase() || "DC STUDIOS",
+            link: `/services/${slug}`,
+            image: s.image_url
+          };
+        });
+        setServicesList(formatted);
+      }
+      if (error) console.error("Error fetching services for dark links:", error);
+    }
+    fetchServices();
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -102,9 +105,9 @@ export default function ServiceDarkLinks() {
                      onMouseEnter={() => setActiveIdx(idx)}
                    >
                       <h3 className={`font-antic uppercase text-3xl md:text-4xl transition-colors duration-500 mb-1.5 tracking-wide drop-shadow-sm ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`}>
-                         {srv.title}
-                      </h3>
-                      <p className={`font-display text-[10px] md:text-xs transition-colors duration-500 uppercase tracking-[0.3em] font-medium drop-shadow-sm ${isActive ? 'text-white/90' : 'text-white/30 group-hover:text-white/60'}`}>
+                          {srv.title.replace(/ Session$/i, '').replace(/ Photography$/i, '')}
+                       </h3>
+                       <p className={`font-display text-[10px] md:text-xs transition-colors duration-500 uppercase tracking-[0.3em] font-medium drop-shadow-sm ${isActive ? 'text-white/90' : 'text-white/30 group-hover:text-white/60'}`}>
                          {srv.subtitle}
                       </p>
                    </Link>

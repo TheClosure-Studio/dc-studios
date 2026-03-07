@@ -8,10 +8,11 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
 const socialLinks = [
-  { platform: "Instagram", url: "#", handle: "@dcstudios" },
-  { platform: "Email", url: "mailto:hello@dcstudios.site", handle: "hello@dcstudios.site" },
-  { platform: "WhatsApp", url: "#", handle: "+1 (555) 123-4567" },
-  { platform: "Pinterest", url: "#", handle: "DC Studios Portfolios" }
+  {platform:"Mobile",url:"tel:+919573717647",handle:"+91 95737 17647"},
+  { platform: "Instagram", url: "#", handle: "@dc.dreamcapturestudio" },
+  { platform: "Email", url: "mailto:dc.dreamcapturesstudio@gmail.com", handle: "dc.dreamcapturesstudio@gmail.com" },
+  { platform: "WhatsApp", url: "#", handle: "+91 95737 17647" },
+  
 ];
 
 export default function ContactPage() {

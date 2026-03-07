@@ -12,24 +12,24 @@ export default function Footer() {
               <div className="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
                 <Phone size={14} />
               </div>
-              <a href="tel:+91XXXXXXXXX" className="text-neutral-300 hover:text-white transition-colors tracking-wide">
-                +91 XXXXX XXXXX
+              <a href="tel:+919573717647" className="text-neutral-300 hover:text-white transition-colors tracking-wide">
+                +91 95737 17647
               </a>
             </div>
             <div className="flex items-center gap-3 group">
               <div className="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
                 <Mail size={14} />
               </div>
-              <a href="mailto:[EMAIL_ADDRESS]" className="text-neutral-300 hover:text-white transition-colors tracking-wide">
-                [EMAIL_ADDRESS]
+              <a href="mailto:dc.dreamcapturesstudio@gmail.com" className="text-neutral-300 hover:text-white transition-colors tracking-wide">
+                dc.dreamcapturesstudio@gmail.com
               </a>
             </div>
             <div className="flex items-start gap-3 group">
               <div className="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center mt-0.5 group-hover:bg-white group-hover:text-black transition-all shrink-0">
                 <MapPin size={14} />
               </div>
-              <p className="text-neutral-400 leading-relaxed max-w-[200px] text-center md:text-left">
-                Tirupati, Andhra Pradesh
+              <p className="text-neutral-400 leading-relaxed max-w-[250px] text-center md:text-left">
+                201, Saryu Homes, Air Bypass Rd, next to SBI Bank, Avilali, AP 517502
               </p>
             </div>
           </div>

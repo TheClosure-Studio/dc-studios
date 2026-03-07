@@ -23,14 +23,48 @@ export default async function ServicePage({ params }) {
   const currentCategory = categories.find((c) => c.slug === slug);
   const serviceTitle = currentCategory?.name || detailsData.heroTitle;
 
-  // Fetch from Supabase for dynamic image or fallback
-  const { data: serviceData } = await supabase
-    .from('services')
-    .select('image_url')
-    .eq('title', serviceTitle)
-    .limit(1);
+  // Mapping between gallery category filters and backgrounds table keys (provided by user)
+  const bgCategoryMap = {
+    Maternity: "maternity",
+    Newborn: "newBorn",
+    Baby: "kidsToddlers",
+    CakeSmash: "cakeSmash",
+    Family: "family",
+    Child: "childSibling",
+  };
+
+  // Fetch from Supabase for dynamic images (Hero and Gallery)
+  // We use the "in" filter to match both the standard capitalized label and the consumer-key label
+  const categoryFilters = [currentCategory.filter];
+  const altFilter = bgCategoryMap[currentCategory.filter];
+  if (altFilter) categoryFilters.push(altFilter);
+
+  const [
+    { data: serviceData },
+    { data: galleryData }
+  ] = await Promise.all([
+    supabase
+      .from('services')
+      .select('image_url')
+      .eq('title', serviceTitle)
+      .limit(1),
+    supabase
+      .from('gallery_images')
+      .select('*')
+      .in('category', categoryFilters)
+      .order('created_at', { ascending: false })
+  ]);
     
   let heroImage = "";
+  // Normalize gallery images: handle both image_url and image_urls array
+  const galleryImages = (galleryData || []).flatMap(item => {
+    if (item.image_urls && Array.isArray(item.image_urls) && item.image_urls.length > 0) {
+      return item.image_urls;
+    } else if (item.image_url) {
+      return [item.image_url];
+    }
+    return [];
+  });
 
   const uploadedImage = Array.isArray(serviceData) && serviceData.length > 0 ? serviceData[0].image_url : serviceData?.image_url;
 
@@ -55,6 +89,7 @@ export default async function ServicePage({ params }) {
       serviceTitle={serviceTitle} 
       heroImage={heroImage} 
       detailsData={detailsData} 
+      galleryImages={galleryImages}
     />
   );
 }

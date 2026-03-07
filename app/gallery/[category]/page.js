@@ -69,6 +69,9 @@ export default async function GalleryPage({ params }) {
   
   const fullCategoryItems = galleryItems || [];
 
+  // Find fallback image in case background table is missing it
+  const currentServiceFallback = fallbackServices.find(f => f.slug === slug);
+
   // Hero image: find specific match
   const bgMatch = bgsData?.find(b => b.category === bgCategoryMap[currentCategory.filter]);
   const heroImageSrc = bgMatch?.image_url || currentServiceFallback?.image_url || '/placeholder.jpg';
