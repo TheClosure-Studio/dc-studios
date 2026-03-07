@@ -114,8 +114,8 @@ export default function Preloader() {
             <h1 className="font-sedgwick text-4xl md:text-5xl lg:text-7xl capitalize preloader-shimmer">
               Dc Studios
             </h1>
-            <p className="uppercase font-display text-[15px] block tracking-tight text-right relative bottom-1 font-bold text-neutral-500">
-              Dream Capture
+            <p className="uppercase font-display text-[12px] md:text-[15px] block text-right tracking-[0.2em] relative bottom-[2px] md:bottom-1 font-bold text-neutral-500">
+              Dream Captures
             </p>
           </motion.div>
         </motion.div>

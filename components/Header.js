@@ -54,7 +54,7 @@ export default function Header() {
         <div className=" px-1 py-1 rounded">
           <Link href="/" className={`text-2xl md:text-4xl tracking-wider font-serif transition-colors duration-300 ${isScrolled || isSolidPage ? 'text-black' : 'text-white'}`}>
             <span className="font-sedgwick ">Dc Studios</span>
-            <span className="uppercase font-display text-[9px] block tracking-tight text-right relative bottom-1">Dream Capture</span>
+            <span className="uppercase font-display text-[8px] block  text-right relative bottom-[4px] md:bottom-1">Dream Captures</span>
           </Link>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-[13px] tracking-wide font-bold text-neutral-800 bg-neutral-200 px-4 rounded h-10 my-auto uppercase">
