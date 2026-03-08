@@ -81,7 +81,7 @@ export default function Hero({ images = [] }) {
             transition={{ delay: 0.3, duration: 1.2 }}
             className="text-xs md:text-sm tracking-[0.4em] text-neutral-300 uppercase font-semibold"
           >
-            Est. 2017
+            Est. 2019
           </motion.p>
         </motion.div>
 

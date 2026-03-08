@@ -6,7 +6,7 @@ import { Reveal } from "./Reveal";
 
 const stats = [
   {
-    value: 1400,
+    value: 1000,
     suffix: "+",
     label: "Moments Captured",
     desc: "We capture the essence of every special moment with creativity and passion.",
@@ -18,7 +18,7 @@ const stats = [
     desc: "We have honed our skills over the years to deliver outstanding photography services.",
   },
   {
-    value: 1000,
+    value: 500,
     suffix: "+",
     label: "Satisfied Clients",
     desc: "Our clients' happiness and trust fuel our commitment to exceptional service.",
