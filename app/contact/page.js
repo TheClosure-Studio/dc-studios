@@ -45,7 +45,7 @@ export default function ContactPage() {
                       Open in Maps <ArrowUpRight size={14} />
                     </a>
                   </div>
-                  <div className="w-full aspect-video rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 border border-neutral-200">
+                  <div className="w-full aspect-video overflow-hidden transition-all duration-700 border border-neutral-200">
                     <iframe 
                       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d84338.18135970713!2d79.45271729442399!3d13.64162437757282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a4d4bd47a017575%3A0xfaa6213e2fc92ed5!2sDc%20studio%20%2FExclusively%20for%20New%20born%2C%20Maternity%20and%20kids%20studio.!5e0!3m2!1sen!2sin!4v1772459817954!5m2!1sen!2sin" 
                       width="100%" 

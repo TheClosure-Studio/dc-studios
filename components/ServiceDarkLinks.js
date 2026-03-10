@@ -20,7 +20,18 @@ export default function ServiceDarkLinks() {
       
       if (data) {
         // Defined requested sort order
-        const order = ["Maternity", "Newborn", "Baby", "CakeSmash", "Family", "Child", "Fashion", "Bath Tub"];
+        const order = ["Maternity", "Newborn", "Baby", "Cake Smash", "Family", "Child", "Fashion", "Bath Tub"];
+        
+        const serviceTaglines = {
+          "Maternity": "Beautiful Motherhood Bliss",
+          "Newborn": "Cute Tiny Wonders",
+          "Baby": "Naughty Childhood Fun",
+          "Cake Smash": "Fun First Birthday",
+          "Family": "Happy Family Bonding",
+          "Child": "Sibling Love Stories",
+          "Fashion": "Bold Stylish Portraits",
+          "Bath Tub": "Serene Flower Bath"
+        };
         
         const getBaseTitle = (t) => t ? t.replace(/ Session$/i, '').replace(/ Photography$/i, '').replace(/ Portrait$/i, '').replace(/ & /g, ' ').replace(/\//g, ' ').trim() : "";
         
@@ -34,15 +45,31 @@ export default function ServiceDarkLinks() {
         });
 
         const formatted = sortedData.map(s => {
-          // Special case for newborn slug to match routing
-          let slug = s.slug || s.title.toLowerCase().replace(/\s+/g, '-');
-          if (s.title === "Newborn Session" || s.title === "Newborn") {
-            slug = "newborn-photography";
+          // Use slug from DB if available, otherwise generate it
+          let slug = s.slug;
+          
+          if (!slug) {
+            // Standardize generation to match routing (replace special chars, lowercase)
+            const baseTitle = s.title
+              .toLowerCase()
+              .replace(/ session$/i, '')
+              .replace(/ photography$/i, '')
+              .replace(/ portrait$/i, '')
+              .replace(/[&/]/g, ' ')
+              .trim()
+              .replace(/\s+/g, '-');
+            
+            slug = baseTitle;
+            
+            // special case for newborn-photography to match existing routes
+            if (slug === "newborn") {
+              slug = "newborn-photography";
+            }
           }
 
           return {
             title: s.title,
-            subtitle: s.subtitle || s.desc?.substring(0, 30).toUpperCase() || "DC STUDIOS",
+            subtitle: s.subtitle || serviceTaglines[order.find(o => getBaseTitle(s.title).includes(o) || o.includes(getBaseTitle(s.title)))] || "DC STUDIOS",
             link: `/services/${slug}`,
             image: s.image_url
           };
@@ -107,10 +134,10 @@ export default function ServiceDarkLinks() {
                      onMouseEnter={() => setActiveIdx(idx)}
                    >
                       <h3 className={`font-antic uppercase text-3xl md:text-4xl transition-colors duration-500 mb-1.5 tracking-wide drop-shadow-sm ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`}>
-                          {srv.title.replace(/ Session$/i, '').replace(/ Photography$/i, '')}
-                       </h3>
+                           {srv.title.replace(/ Session$/i, '').replace(/ Photography$/i, '')}
+                        </h3>
                        <p className={`font-display text-[10px] md:text-xs transition-colors duration-500 uppercase tracking-[0.3em] font-medium drop-shadow-sm ${isActive ? 'text-white/90' : 'text-white/30 group-hover:text-white/60'}`}>
-                         {srv.subtitle}
+                          {srv.subtitle}
                       </p>
                    </Link>
                  </Reveal>
