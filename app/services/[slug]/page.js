@@ -139,7 +139,7 @@ export default async function ServicePage({ params }) {
       "child-sibling": "/christian-bowen-I0ItPtIsVEE-unsplash.jpg",
       "fashion": "/yuri-li-p0hDztR46cw-unsplash.jpg"
     };
-    heroImage = fallbackServices[slug] || '/placeholder.jpg';
+    heroImage = fallbackServices[slug] || '/adele-morris-mDiFpFl_jTs-unsplash.jpg';
   }
 
   return (

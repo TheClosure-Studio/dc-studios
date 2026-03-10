@@ -25,7 +25,7 @@ export default function CategoryGalleryGrid({ items = [] }) {
           } else if (item.image_url) {
             images = [item.image_url];
           } else {
-            images = ['/placeholder.jpg'];
+            images = ['/adele-morris-mDiFpFl_jTs-unsplash.jpg'];
           }
           
           return (

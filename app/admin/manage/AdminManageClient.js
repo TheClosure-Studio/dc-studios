@@ -105,7 +105,7 @@ export default function AdminManageClient({ initialItems }) {
           <div key={item.id} className="group relative bg-white overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-shadow">
             <div className="relative h-48 w-full bg-neutral-100">
               <Image 
-                src={item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : '/placeholder.jpg'}
+                src={item.image_urls && item.image_urls.length > 0 ? item.image_urls[0] : '/adele-morris-mDiFpFl_jTs-unsplash.jpg'}
                 alt={item.title}
                 fill
                 className="object-cover"

@@ -22,6 +22,11 @@ export default function ImageWithSkeleton({
   skeletonClassName = "bg-neutral-100 animate-skeleton"
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  // If there's an error, we fallback to a verified local asset
+  const fallback = "/adele-morris-mDiFpFl_jTs-unsplash.jpg";
+  const displaySrc = hasError ? fallback : src;
 
   return (
     <div className={`relative overflow-hidden w-full h-full ${containerClassName}`}>
@@ -34,7 +39,7 @@ export default function ImageWithSkeleton({
       )}
       
       <Image
-        src={src}
+        src={displaySrc}
         alt={alt}
         fill={fill}
         width={width}
@@ -44,6 +49,13 @@ export default function ImageWithSkeleton({
         sizes={sizes}
         loading={priority ? undefined : loading}
         onLoad={() => setIsLoaded(true)}
+        onError={() => {
+          if (!hasError) {
+             setHasError(true);
+             // Also mark as loaded so skeleton disappears for fallback
+             setIsLoaded(true);
+          }
+        }}
         className={`${className} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       />
     </div>

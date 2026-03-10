@@ -37,8 +37,8 @@ const categoryFallbacks = {
     { id: "fb-ch-2", title: "Child & Sibling", image_urls: ["/daniel-thomas-_tYNzEqehMk-unsplash.jpg"] },
   ],
   BathTub: [
-    { id: "fb-bt-1", title: "Bath Tub Portrait", image_urls: ["/placeholder.jpg"] },
-    { id: "fb-bt-2", title: "Bath Tub Portrait", image_urls: ["/placeholder.jpg"] },
+    { id: "fb-bt-1", title: "Bath Tub Portrait", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
+    { id: "fb-bt-2", title: "Bath Tub Portrait", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
   ],
   Fashion: [
     { id: "fb-fs-1", title: "Fashion", image_urls: ["/yuri-li-p0hDztR46cw-unsplash.jpg"] },

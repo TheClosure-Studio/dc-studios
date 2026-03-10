@@ -2,8 +2,14 @@
 
 import { Phone } from "lucide-react";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function FloatingContact() {
+  const pathname = usePathname();
+  
+  // Hide on admin pages
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}

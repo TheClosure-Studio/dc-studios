@@ -150,12 +150,12 @@ export default async function Home() {
   }
 
   // Define requested sort order
-  const order = ["Maternity", "Newborn", "Baby", "CakeSmash", "Family", "Child", "Fashion"];
+  const order = ["Maternity", "Newborn", "Baby", "CakeSmash", "Family", "Child", "Fashion", "Bath Tub"];
   
   // Sort services based on the predefined order
   services.sort((a, b) => {
-    const indexA = order.findIndex(o => getBaseTitle(a.title).includes(o) || o.includes(getBaseTitle(a.title)));
-    const indexB = order.findIndex(o => getBaseTitle(b.title).includes(o) || o.includes(getBaseTitle(b.title)));
+    const indexA = order.findIndex(o => getBaseTitle(a.title).includes(o.toLowerCase()) || o.toLowerCase().includes(getBaseTitle(a.title)));
+    const indexB = order.findIndex(o => getBaseTitle(b.title).includes(o.toLowerCase()) || o.toLowerCase().includes(getBaseTitle(b.title)));
     
     // If title not found in order array, put it at the end
     if (indexA === -1 && indexB === -1) return 0;

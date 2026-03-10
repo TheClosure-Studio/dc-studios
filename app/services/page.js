@@ -56,7 +56,7 @@ const fallbackServices = [
   {
     title: "Bath Tub Session",
     desc: "Artistic and serene bath tub portraits, capturing pure elegance and grace. A unique fine-art experience using curated botanicals and soft lighting.",
-    img: "/placeholder.jpg",
+    img: "/adele-morris-mDiFpFl_jTs-unsplash.jpg",
     slug: "bath-tub"
   }
 ];
