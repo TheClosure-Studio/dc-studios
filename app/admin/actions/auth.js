@@ -4,10 +4,10 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function login(prevState, formData) {
-  const email = formData.get('email');
+  const username = formData.get('username');
   const password = formData.get('password');
 
-  if (email === 'dc@gmail.com' && password === 'dc12345') {
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     const cookieStore = await cookies();
     cookieStore.set('admin_auth', 'true', {
       httpOnly: true,
@@ -19,7 +19,7 @@ export async function login(prevState, formData) {
     return { success: true };
   }
 
-  return { error: 'Invalid email or password' };
+  return { error: 'Invalid username or password' };
 }
 
 export async function logout() {

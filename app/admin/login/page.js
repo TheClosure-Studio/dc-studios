@@ -28,13 +28,13 @@ export default function AdminLogin() {
         
         <form action={formAction} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">Email Address</label>
+            <label className="block text-sm font-medium text-neutral-300 mb-2">Username</label>
             <input 
-              type="email" 
-              name="email"
+              type="text" 
+              name="username"
               required
               className="w-full bg-neutral-950 border border-neutral-800 rounded-md px-4 py-3 text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
-              placeholder="dc@gmail.com"
+              placeholder="Username"
             />
           </div>
           

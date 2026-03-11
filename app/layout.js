@@ -59,7 +59,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${fontVariables} font-display font-serif relative`}>
         <Preloader />
         <SmoothScroll>
