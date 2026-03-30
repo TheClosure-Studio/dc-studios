@@ -20,6 +20,8 @@ export function generateStaticParams() {
   }));
 }
 
+export const revalidate = 3600;
+
 export default async function GalleryPage({ params }) {
   // Extract category slug from the URL parameters
   const { category: slug } = await params;
@@ -31,16 +33,7 @@ export default async function GalleryPage({ params }) {
     notFound();
   }
 
-  const fallbackServices = [
-    { title: "Newborn Session", image_url: "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg", slug: "newborn-photography" },
-    { title: "Baby/Toddler Session", image_url: "/adele-morris-mDiFpFl_jTs-unsplash.jpg", slug: "baby-toddler" },
-    { title: "Maternity Session", image_url: "/toa-heftiba-C-8uOz7GluA-unsplash.jpg", slug: "maternity" },
-    { title: "Family Session", image_url: "/adele-morris-mDiFpFl_jTs-unsplash.jpg", slug: "family" },
-    { title: "Child & Sibling Session", image_url: "/christian-bowen-I0ItPtIsVEE-unsplash.jpg", slug: "child-sibling" },
-    { title: "Cake Smash Session", image_url: "/freestocks-ux53SGpRAHU-unsplash.jpg", slug: "cake-smash" },
-    { title: "Fashion Session", image_url: "/yuri-li-p0hDztR46cw-unsplash.jpg", slug: "fashion" },
-    { title: "Bath Tub Session", image_url: "/adele-morris-mDiFpFl_jTs-unsplash.jpg", slug: "bath-tub" }
-  ];
+
 
   // Mapping between gallery category filters and backgrounds table keys
   const bgCategoryMap = {
@@ -60,12 +53,12 @@ export default async function GalleryPage({ params }) {
   ] = await Promise.all([
     supabase
       .from('gallery_images')
-      .select('*')
+      .select('id, title, category, image_urls')
       .eq('category', currentCategory.filter)
       .order('created_at', { ascending: false }),
     supabase
       .from('backgrounds')
-      .select('*')
+      .select('category, image_url')
   ]);
 
   if (galleryError) console.error("Error fetching category images:", galleryError);
@@ -73,12 +66,14 @@ export default async function GalleryPage({ params }) {
   
   const fullCategoryItems = galleryItems || [];
 
-  // Find fallback image in case background table is missing it
-  const currentServiceFallback = fallbackServices.find(f => f.slug === slug);
+  // If no background banner exist, dynamically fallback to the first gallery photo they uploaded
+  const dynamicFallback = fullCategoryItems.length > 0 && fullCategoryItems[0].image_urls && fullCategoryItems[0].image_urls.length > 0 
+    ? fullCategoryItems[0].image_urls[0] 
+    : "";
 
-  // Hero image: find specific match
+  // Hero image: find specific match or fallback
   const bgMatch = bgsData?.find(b => b.category === bgCategoryMap[currentCategory.filter]);
-  const heroImageSrc = bgMatch?.image_url || currentServiceFallback?.image_url || '/adele-morris-mDiFpFl_jTs-unsplash.jpg';
+  const heroImageSrc = bgMatch?.image_url || dynamicFallback;
 
   return (
     <div className="bg-white min-h-screen text-black overflow-x-hidden font-display selection:bg-black selection:text-white">

@@ -10,41 +10,6 @@ import { Reveal } from "./Reveal";
 import { categories as defaultCategories } from "../lib/constants";
 import Lightbox from "./Lightbox";
 
-// Fallback images guaranteed per category (2 each)
-const categoryFallbacks = {
-  Maternity:  [
-    { id: "fb-mat-1", title: "Maternity", image_urls: ["/toa-heftiba-C-8uOz7GluA-unsplash.jpg"] },
-    { id: "fb-mat-2", title: "Maternity", image_urls: ["/vitor-monthay-R1UkYL5J1r8-unsplash.jpg"] },
-  ],
-  Newborn: [
-    { id: "fb-nb-1", title: "Newborn", image_urls: ["/nihal-karkala-M5aSbOXeDyo-unsplash.jpg"] },
-    { id: "fb-nb-2", title: "Newborn", image_urls: ["/alireza-attari-SBIak0pKUIE-unsplash.jpg"] },
-  ],
-  Baby: [
-    { id: "fb-baby-1", title: "Baby", image_urls: ["/yuri-li-p0hDztR46cw-unsplash.jpg"] },
-    { id: "fb-baby-2", title: "Baby", image_urls: ["/freestocks-ux53SGpRAHU-unsplash.jpg"] },
-  ],
-  CakeSmash: [
-    { id: "fb-cs-1", title: "Cake Smash", image_urls: ["/freestocks-ux53SGpRAHU-unsplash.jpg"] },
-    { id: "fb-cs-2", title: "Cake Smash", image_urls: ["/yuri-li-p0hDztR46cw-unsplash.jpg"] },
-  ],
-  Family: [
-    { id: "fb-fam-1", title: "Family", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
-    { id: "fb-fam-2", title: "Family", image_urls: ["/christian-bowen-I0ItPtIsVEE-unsplash.jpg"] },
-  ],
-  Child: [
-    { id: "fb-ch-1", title: "Child & Sibling", image_urls: ["/christian-bowen-I0ItPtIsVEE-unsplash.jpg"] },
-    { id: "fb-ch-2", title: "Child & Sibling", image_urls: ["/daniel-thomas-_tYNzEqehMk-unsplash.jpg"] },
-  ],
-  BathTub: [
-    { id: "fb-bt-1", title: "Bath Tub Portrait", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
-    { id: "fb-bt-2", title: "Bath Tub Portrait", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
-  ],
-  Fashion: [
-    { id: "fb-fs-1", title: "Fashion", image_urls: ["/yuri-li-p0hDztR46cw-unsplash.jpg"] },
-    { id: "fb-fs-2", title: "Fashion", image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
-  ],
-};
 
 export default function Gallery({ galleryItems = [], categories = defaultCategories }) {
   const [lightboxData, setLightboxData] = useState(null);
@@ -69,7 +34,10 @@ export default function Gallery({ galleryItems = [], categories = defaultCategor
               (Array.isArray(item.tags) && item.tags.includes(category.filter)) ||
               item.category === category.filter
             ).slice(0, 2);
-            const items = uploaded.length > 0 ? uploaded.slice(0, 2) : (categoryFallbacks[category.filter] || []).slice(0, 2);
+            
+            if (uploaded.length === 0) return null;
+
+            const items = uploaded;
 
             return (
               <div key={idx} className="border-t border-neutral-200  pt-6 md:pt-12">

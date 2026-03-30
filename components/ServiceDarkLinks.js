@@ -7,12 +7,16 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "./Reveal";
 import { supabase } from "../lib/supabase";
 
+let cachedServicesList = null;
+
 export default function ServiceDarkLinks() {
-  const [servicesList, setServicesList] = useState([]);
+  const [servicesList, setServicesList] = useState(cachedServicesList || []);
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (cachedServicesList) return;
+
     async function fetchServices() {
       const { data, error } = await supabase
         .from('services')
@@ -74,6 +78,7 @@ export default function ServiceDarkLinks() {
             image: s.image_url
           };
         });
+        cachedServicesList = formatted;
         setServicesList(formatted);
       }
       if (error) console.error("Error fetching services for dark links:", error);

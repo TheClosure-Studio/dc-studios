@@ -1,0 +1,50 @@
+[
+  {
+    "id": "29dca422-740d-4fd1-90c6-6002c92714fc",
+    "title": "Maternity",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773129361431-kc5mi9-1000371393.jpg",
+    "created_at": "2026-03-10T07:56:10.941796+00:00"
+  },
+  {
+    "id": "e22f7a77-ea8e-4396-91f2-c42163055c86",
+    "title": "Newborn",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773129537231-q7o37s-1000475208.jpg",
+    "created_at": "2026-03-10T07:59:05.7766+00:00"
+  },
+  {
+    "id": "be8f164f-682b-4ea2-946a-4998d131b0a4",
+    "title": "Baby/Toddler",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773129606096-adaq8i-1000485168.jpg",
+    "created_at": "2026-03-10T08:00:17.452432+00:00"
+  },
+  {
+    "id": "af2fc85b-c582-4307-81d7-2661e889d2b1",
+    "title": "Fashion",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773130482887-1l7nbr-1000517181.jpg",
+    "created_at": "2026-03-10T08:14:58.457166+00:00"
+  },
+  {
+    "id": "5593711d-ec1b-46d0-86db-e86f796abf0a",
+    "title": "Bath Tub",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773135005420-0vm7o6-1000361652.jpg",
+    "created_at": "2026-03-10T09:30:35.319029+00:00"
+  },
+  {
+    "id": "4aff8cbf-479d-4aa1-bbfd-570d28031a32",
+    "title": "Family",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773167346543-u2wiix-1000373208.jpg",
+    "created_at": "2026-03-10T18:29:09.531627+00:00"
+  },
+  {
+    "id": "8eaf8ad5-6796-494e-8510-e14438a29f37",
+    "title": "Child & Sibling",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1773167387427-lmfjzj-1000518680.jpg",
+    "created_at": "2026-03-10T18:29:50.490102+00:00"
+  },
+  {
+    "id": "e6a7eb49-05d0-44e4-af1d-6ed85bc236ef",
+    "title": "Cake Smash",
+    "image_url": "https://ksbqwgirdixxcfmnlytu.supabase.co/storage/v1/object/public/admin-uploads/bgs/1774253685208-b9lea4-1000494121.jpg",
+    "created_at": "2026-03-23T08:14:50.469333+00:00"
+  }
+]

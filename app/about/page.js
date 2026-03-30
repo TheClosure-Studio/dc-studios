@@ -32,10 +32,12 @@ const faqs = [
   }
 ];
 
+let cachedAboutBgs = null;
+
 export default function AboutPage() {
-  const [heroBg, setHeroBg] = useState("/christian-bowen-I0ItPtIsVEE-unsplash.jpg");
-  const [statementBg, setStatementBg] = useState("/freestocks-ux53SGpRAHU-unsplash.jpg");
-  const [bioBg, setBioBg] = useState("/freestocks-ux53SGpRAHU-unsplash.jpg");
+  const [heroBg, setHeroBg] = useState(cachedAboutBgs?.heroBg || "/christian-bowen-I0ItPtIsVEE-unsplash.jpg");
+  const [statementBg, setStatementBg] = useState(cachedAboutBgs?.statementBg || "/freestocks-ux53SGpRAHU-unsplash.jpg");
+  const [bioBg, setBioBg] = useState(cachedAboutBgs?.bioBg || "/freestocks-ux53SGpRAHU-unsplash.jpg");
   const containerRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -47,6 +49,8 @@ export default function AboutPage() {
   const textOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
+    if (cachedAboutBgs) return;
+
     async function loadBgs() {
       const { data } = await supabase
         .from('backgrounds')
@@ -62,6 +66,12 @@ export default function AboutPage() {
         if (bg1Data) setHeroBg(bg1Data.image_url);
         if (bg2Data) setStatementBg(bg2Data.image_url);
         if (bg3Data) setBioBg(bg3Data.image_url);
+
+        cachedAboutBgs = {
+          heroBg: bg1Data ? bg1Data.image_url : heroBg,
+          statementBg: bg2Data ? bg2Data.image_url : statementBg,
+          bioBg: bg3Data ? bg3Data.image_url : bioBg
+        };
       }
     }
     loadBgs();

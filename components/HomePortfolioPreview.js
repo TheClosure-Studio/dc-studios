@@ -7,17 +7,6 @@ import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { categories } from "../lib/constants";
 
-// One fallback image per category in the same order as constants
-const fallbackByCategory = {
-  Maternity:  "/toa-heftiba-C-8uOz7GluA-unsplash.jpg",
-  Newborn:    "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg",
-  Baby:       "/yuri-li-p0hDztR46cw-unsplash.jpg",
-  CakeSmash:  "/freestocks-ux53SGpRAHU-unsplash.jpg",
-  Family:     "/adele-morris-mDiFpFl_jTs-unsplash.jpg",
-  Child:      "/christian-bowen-I0ItPtIsVEE-unsplash.jpg",
-  Fashion:    "/yuri-li-p0hDztR46cw-unsplash.jpg",
-  BathTub:    "/adele-morris-mDiFpFl_jTs-unsplash.jpg",
-};
 
 export default function HomePortfolioPreview({
   header = "Adding the memories of every moment",
@@ -51,14 +40,12 @@ export default function HomePortfolioPreview({
         item.category === cat.filter
     );
 
-    const src =
-      bgMatch?.image_url ||
-      galleryMatch?.image_urls?.[0] || 
-      fallbackByCategory[cat.filter] || 
-      "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg";
+    const src = bgMatch?.image_url || galleryMatch?.image_urls?.[0];
+    
+    if (!src) return null;
 
     return { name: cat.name, slug: cat.slug, src };
-  });
+  }).filter(Boolean);
 
   return (
     <section className="bg-[#f2f2f0] py-16 md:py-24 overflow-hidden">

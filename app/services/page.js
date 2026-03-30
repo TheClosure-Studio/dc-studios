@@ -7,8 +7,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { supabase } from "../../lib/supabase";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const fallbackServices = [
   {
