@@ -8,19 +8,15 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-let cachedHeroImages = null;
-
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false);
-  const [heroImages, setHeroImages] = useState(cachedHeroImages || []);
+  const [heroImages, setHeroImages] = useState([]);
   const pathname = usePathname();
 
   useEffect(() => {
-    if (cachedHeroImages) return;
-
     const fetchHeroImages = async () => {
       const { data } = await supabase
         .from('hero_backgrounds')
@@ -29,8 +25,7 @@ export default function Header() {
         .limit(2);
       
       if (data) {
-        cachedHeroImages = data.map(item => item.image_url);
-        setHeroImages(cachedHeroImages);
+        setHeroImages(data.map(item => item.image_url));
       }
     };
     fetchHeroImages();

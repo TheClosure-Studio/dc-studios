@@ -18,14 +18,15 @@ export default function CategoryGalleryGrid({ items = [] }) {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {items.slice(0, visibleCount).map((item) => {
+          // Normalize images: favor image_urls array, fallback to single image_url string, then placeholder
           let images = [];
           if (item.image_urls && item.image_urls.length > 0) {
             images = item.image_urls;
           } else if (item.image_url) {
             images = [item.image_url];
+          } else {
+            images = ['/adele-morris-mDiFpFl_jTs-unsplash.jpg'];
           }
-          
-          if (images.length === 0) return null;
           
           return (
             <Reveal key={item.id}>

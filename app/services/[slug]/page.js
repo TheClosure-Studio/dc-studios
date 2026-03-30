@@ -10,7 +10,8 @@ export function generateStaticParams() {
   }));
 }
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ServicePage({ params }) {
   const { slug } = await params;
@@ -67,18 +68,18 @@ export default async function ServicePage({ params }) {
   ] = await Promise.all([
     supabase
       .from('backgrounds')
-      .select('category, image_url'),
+      .select('*'),
     supabase
       .from('gallery_images')
-      .select('id, title, category, image_urls')
+      .select('*')
       .in('category', categoryFilters)
       .order('created_at', { ascending: false }),
     supabase
       .from('services')
-      .select('id, title, image_url'),
+      .select('*'),
     supabase
       .from('reviews')
-      .select('id, review_text, client_name, rating, session_type')
+      .select('*')
       .order('date', { ascending: false })
   ]);
 
@@ -123,8 +124,23 @@ export default async function ServicePage({ params }) {
   // 2. Fallback to backgrounds table (older method)
   const uploadedBackground = bgsData?.find(b => b.category === bgCategoryMap[currentCategory.filter])?.image_url;
 
-  const dynamicFallback = galleryImages.length > 0 ? galleryImages[0] : "";
-  heroImage = servicesTableMatch?.image_url || uploadedBackground || dynamicFallback;
+  if (servicesTableMatch?.image_url) {
+    heroImage = servicesTableMatch.image_url;
+  } else if (uploadedBackground) {
+    heroImage = uploadedBackground;
+  } else {
+    // Determine static fallback
+    const fallbackServices = {
+      "maternity": "/toa-heftiba-C-8uOz7GluA-unsplash.jpg",
+      "newborn-photography": "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg",
+      "baby-toddler": "/yuri-li-p0hDztR46cw-unsplash.jpg",
+      "cake-smash": "/freestocks-ux53SGpRAHU-unsplash.jpg",
+      "family": "/adele-morris-mDiFpFl_jTs-unsplash.jpg",
+      "child-sibling": "/christian-bowen-I0ItPtIsVEE-unsplash.jpg",
+      "fashion": "/yuri-li-p0hDztR46cw-unsplash.jpg"
+    };
+    heroImage = fallbackServices[slug] || '/adele-morris-mDiFpFl_jTs-unsplash.jpg';
+  }
 
   return (
     <ServiceDetail 

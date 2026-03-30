@@ -12,7 +12,8 @@ import StatsSection from "../components/StatsSection";
 import { supabase } from "@/lib/supabase";
 import AnimatedText from "@/components/AnimateText";
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: "DC Studios | Best Studio for Newborn, Maternity & Fashion in Tirupati",
@@ -72,10 +73,10 @@ export default async function Home() {
     { data: galleryData }
   ] = await Promise.all([
     supabase.from('hero_backgrounds').select('image_url').order('display_order', { ascending: true }).order('created_at', { ascending: false }),
-    supabase.from('services').select('id, title, image_url').order('created_at', { ascending: false }),
-    supabase.from('backgrounds').select('category, image_url'),
-    supabase.from('reviews').select('id, review_text, client_name, rating, session_type').order('date', { ascending: false }),
-    supabase.from('gallery_images').select('id, title, category, image_urls').order('created_at', { ascending: false })
+    supabase.from('services').select('*').order('created_at', { ascending: false }),
+    supabase.from('backgrounds').select('*'),
+    supabase.from('reviews').select('*').order('date', { ascending: false }),
+    supabase.from('gallery_images').select('*').order('created_at', { ascending: false })
   ]);
 
   const fallbackHeroImages = [
@@ -95,38 +96,62 @@ export default async function Home() {
     { title: "Fashion Session", slug: "fashion", desc: "High-end conceptual and fashion photography tailored to your style.", image_url: "/yuri-li-p0hDztR46cw-unsplash.jpg" },
   ];
 
+  const fallbackGalleryItems = [
+    { title: "Oliver's First Days", category: "Newborn", tags: ["Newborn"], image_urls: ["/adele-morris-mDiFpFl_jTs-unsplash.jpg"] },
+    { title: "Sweet Sophia", category: "Fashion", tags: ["Fashion"], image_urls: ["/christian-bowen-I0ItPtIsVEE-unsplash.jpg"] },
+    { title: "Avant Garde", category: "Conceptual", tags: ["Conceptual"], image_urls: ["/yuri-li-p0hDztR46cw-unsplash.jpg"] },
+    { title: "Emma's Glow", category: "Maternity", tags: ["Maternity"], image_urls: ["/toa-heftiba-C-8uOz7GluA-unsplash.jpg"] }
+  ];
 
   const heroImages = heroData && heroData.length > 0 ? heroData.map(h => h.image_url) : fallbackHeroImages;
   
-  // Just rely purely on the user's database configuration for services!
-  let services = servicesData && servicesData.length > 0 
-    ? servicesData.map(s => {
-        // Build the slug since the database table lacks it
-        let generatedSlug = s.title.toLowerCase().replace(/ session$/i, '').replace(/ photography$/i, '').replace(/ portrait$/i, '').replace(/[&/]/g, ' ').trim().replace(/\s+/g, '-');
-        if (generatedSlug === "newborn") generatedSlug = "newborn-photography"; // Ensure backward compatibility with existing route
-        
+  // Merge Services: Match DB items to fallbacks by title, ensuring a full 6-item grid
+    const getBaseTitle = (t) => {
+      if (!t) return "";
+      return t
+        .replace(/ Session$/i, '')
+        .replace(/ Photography$/i, '')
+        .replace(/ Portrait$/i, '')
+        .replace(/[&/]/g, ' ')
+        .trim()
+        .toLowerCase();
+    };
+
+    const services = fallbackServices.map(fallback => {
+      const dbMatch = servicesData?.find(s => {
+        const dbTitle = getBaseTitle(s.title);
+        const fbTitle = getBaseTitle(fallback.title);
+        return dbTitle.includes(fbTitle) || fbTitle.includes(dbTitle);
+      });
+      
+      if (dbMatch) {
         return {
-          title: s.title,
-          slug: generatedSlug,
-          image_url: s.image_url
+          title: dbMatch.title || fallback.title,
+          slug: dbMatch.slug || fallback.slug,
+          desc: dbMatch.desc || fallback.desc,
+          image_url: dbMatch.image_url || fallback.image_url
         };
-      })
-    : fallbackServices;
+      }
+      return fallback;
+    });
+
+  // Also add any DB services that DON'T match a fallback (just in case new categories are added)
+  const unmatchedDbServices = servicesData?.filter(s => 
+    !fallbackServices.some(f => getBaseTitle(f.title) === getBaseTitle(s.title))
+  ).map(s => ({
+    title: s.title,
+    slug: s.slug || s.title.toLowerCase().replace(/\s+/g, '-'),
+    desc: s.desc || "",
+    image_url: s.image_url
+  })) || [];
+
+  if (unmatchedDbServices.length > 0) {
+    services.push(...unmatchedDbServices);
+  }
 
   // Define requested sort order
-  const order = ["Maternity", "Newborn", "Baby", "Cake Smash", "Family", "Child", "Fashion", "Bath Tub"];
+  const order = ["Maternity", "Newborn", "Baby", "CakeSmash", "Family", "Child", "Fashion", "Bath Tub"];
   
-  const getBaseTitle = (t) => {
-    if (!t) return "";
-    return t
-      .replace(/ Session$/i, '')
-      .replace(/ Photography$/i, '')
-      .replace(/ Portrait$/i, '')
-      .replace(/[&/]/g, ' ')
-      .trim()
-      .toLowerCase();
-  };
-
   // Sort services based on the predefined order
   services.sort((a, b) => {
     const indexA = order.findIndex(o => getBaseTitle(a.title).includes(o.toLowerCase()) || o.toLowerCase().includes(getBaseTitle(a.title)));
@@ -162,9 +187,18 @@ export default async function Home() {
       }))
     : fallbackTestimonials;
 
-  // Pass only actual uploaded gallery items so user doesn't see mock images for missing categories
+  // Merge Gallery: Ensure at least one image per category exists so sections don't disappear
   const uploadedGalleryItems = galleryData || [];
   const galleryItems = [...uploadedGalleryItems];
+  const galleryCategories = ["Newborn", "Fashion", "Conceptual", "Maternity"];
+  
+  galleryCategories.forEach(cat => {
+    const hasUploads = uploadedGalleryItems.some(item => item.category === cat || (Array.isArray(item.tags) && item.tags.includes(cat)));
+    if (!hasUploads) {
+      const fallbackItemsForCat = fallbackGalleryItems.filter(f => f.category === cat);
+      galleryItems.push(...fallbackItemsForCat);
+    }
+  });
 
   return (
     <div className="bg-white min-h-screen text-black overflow-hidden font-display selection:bg-black selection:text-white">
