@@ -5,6 +5,7 @@ import { saveGalleryRecord } from '../actions/gallery';
 import { Upload, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import imageCompression from 'browser-image-compression';
 
 export default function AdminUploadClient({ categories = [] }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -69,14 +70,26 @@ export default function AdminUploadClient({ categories = [] }) {
       const uploadedUrls = [];
 
       for (const file of files) {
+        let fileToUpload = file;
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          };
+          fileToUpload = await imageCompression(file, options);
+        } catch (err) {
+          console.error("Compression error:", err);
+        }
+
         const timeHash = Math.random().toString(36).substring(2, 8);
         const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
         const filename = `${Date.now()}-${timeHash}-${safeName}`;
 
         const { data, error: uploadError } = await supabase.storage
           .from('admin-uploads')
-          .upload(filename, file, {
-            contentType: file.type,
+          .upload(filename, fileToUpload, {
+            contentType: fileToUpload.type,
             upsert: false
           });
 

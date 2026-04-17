@@ -118,9 +118,11 @@ export default async function ServicesPage() {
       .toLowerCase();
   };
 
+  const servicesDataSafe = servicesData || [];
+
   const services = fallbackServices.map(fallback => {
     // 1. Prioritize image from services table
-    const dbMatch = servicesData?.find(s => {
+    const dbMatch = servicesDataSafe.find(s => {
       const dbTitle = getBaseTitle(s.title);
       const fbTitle = getBaseTitle(fallback.title);
       return dbTitle.includes(fbTitle) || fbTitle.includes(dbTitle);

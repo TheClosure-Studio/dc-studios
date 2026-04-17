@@ -24,6 +24,10 @@ export default function HomePortfolioPreview({
   galleryItems = [],
   bgItems = [],
 }) {
+  // Ensure we always have arrays even if null was passed explicitly
+  const safeGalleryItems = Array.isArray(galleryItems) ? galleryItems : [];
+  const safeBgItems = Array.isArray(bgItems) ? bgItems : [];
+
   // Mapping between constant filters and backgrounds table category keys
   const bgCategoryMap = {
     Maternity: "maternity",
@@ -42,10 +46,10 @@ export default function HomePortfolioPreview({
   // 3. Static fallback constant (Last resort)
   const cards = categories.map((cat) => {
     // 1. Try to find in backgrounds table
-    const bgMatch = bgItems.find(bg => bg.category === bgCategoryMap[cat.filter]);
+    const bgMatch = safeBgItems.find(bg => bg.category === bgCategoryMap[cat.filter]);
     
     // 2. Try to find in gallery_images
-    const galleryMatch = galleryItems.find(
+    const galleryMatch = safeGalleryItems.find(
       (item) =>
         (Array.isArray(item.tags) && item.tags.includes(cat.filter)) ||
         item.category === cat.filter

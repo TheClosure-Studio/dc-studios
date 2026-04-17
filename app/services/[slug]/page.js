@@ -83,7 +83,9 @@ export default async function ServicePage({ params }) {
       .order('date', { ascending: false })
   ]);
 
-  const reviews = reviewsData && reviewsData.length > 0 
+  const bgsDataSafe = bgsData || [];
+  const servicesTableDataSafe = servicesTableData || [];
+  const reviewsSafe = (reviewsData || []).length > 0 
     ? reviewsData.map(r => ({
         text: r.review_text,
         author: r.client_name,
@@ -115,14 +117,14 @@ export default async function ServicePage({ params }) {
   };
   
   // 1. Prioritize image from services table (uploaded via "Services Images")
-  const servicesTableMatch = servicesTableData?.find(s => {
+  const servicesTableMatch = servicesTableDataSafe.find(s => {
     const dbTitle = getBaseTitle(s.title);
     const fbTitle = getBaseTitle(serviceTitle);
     return dbTitle.includes(fbTitle) || fbTitle.includes(dbTitle);
   });
   
   // 2. Fallback to backgrounds table (older method)
-  const uploadedBackground = bgsData?.find(b => b.category === bgCategoryMap[currentCategory.filter])?.image_url;
+  const uploadedBackground = bgsDataSafe.find(b => b.category === bgCategoryMap[currentCategory.filter])?.image_url;
 
   if (servicesTableMatch?.image_url) {
     heroImage = servicesTableMatch.image_url;
@@ -149,8 +151,8 @@ export default async function ServicePage({ params }) {
       heroImage={heroImage} 
       detailsData={detailsData} 
       galleryImages={galleryImages}
-      bgItems={bgsData || []}
-      testimonials={reviews}
+      bgItems={bgsDataSafe}
+      testimonials={reviewsSafe}
     />
   );
 }

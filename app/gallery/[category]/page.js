@@ -73,13 +73,14 @@ export default async function GalleryPage({ params }) {
   if (galleryError) console.error("Error fetching category images:", galleryError);
   if (bgError) console.error("Error fetching backgrounds:", bgError);
   
+  const bgsDataSafe = bgsData || [];
   const fullCategoryItems = galleryItems || [];
 
   // Find fallback image in case background table is missing it
   const currentServiceFallback = fallbackServices.find(f => f.slug === slug);
 
   // Hero image: find specific match
-  const bgMatch = bgsData?.find(b => b.category === bgCategoryMap[currentCategory.filter]);
+  const bgMatch = bgsDataSafe.find(b => b.category === bgCategoryMap[currentCategory.filter]);
   const heroImageSrc = bgMatch?.image_url || currentServiceFallback?.image_url || '/adele-morris-mDiFpFl_jTs-unsplash.jpg';
 
   return (
@@ -100,7 +101,7 @@ export default async function GalleryPage({ params }) {
         </div>
       </section>
     </main>
-    <HomePortfolioPreview header=" Explore More Portfolios" bgItems={bgsData} />
+    <HomePortfolioPreview header=" Explore More Portfolios" bgItems={bgsDataSafe} />
     <Footer />
     </div>
   );

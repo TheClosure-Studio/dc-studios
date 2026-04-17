@@ -6,6 +6,7 @@ import { saveBackgroundRecord, deleteBackground } from '../actions/backgrounds';
 import { Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import imageCompression from 'browser-image-compression';
 
 export default function BackgroundManagerClient({ 
   category, 
@@ -68,14 +69,26 @@ export default function BackgroundManagerClient({
     }
     
     try {
+      let fileToUpload = file;
+      try {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+        fileToUpload = await imageCompression(file, options);
+      } catch (err) {
+        console.error("Compression error:", err);
+      }
+
       const timeHash = Math.random().toString(36).substring(2, 8);
       const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
       const filename = `bgs/${Date.now()}-${timeHash}-${safeName}`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('admin-uploads')
-        .upload(filename, file, {
-          contentType: file.type,
+        .upload(filename, fileToUpload, {
+          contentType: fileToUpload.type,
           upsert: false
         });
 

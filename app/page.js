@@ -117,33 +117,35 @@ export default async function Home() {
         .toLowerCase();
     };
 
-    const services = fallbackServices.map(fallback => {
-      const dbMatch = servicesData?.find(s => {
-        const dbTitle = getBaseTitle(s.title);
-        const fbTitle = getBaseTitle(fallback.title);
-        return dbTitle.includes(fbTitle) || fbTitle.includes(dbTitle);
-      });
-      
-      if (dbMatch) {
-        return {
-          title: dbMatch.title || fallback.title,
-          slug: dbMatch.slug || fallback.slug,
-          desc: dbMatch.desc || fallback.desc,
-          image_url: dbMatch.image_url || fallback.image_url
-        };
-      }
-      return fallback;
+  const servicesDataSafe = servicesData || [];
+  
+  const services = fallbackServices.map(fallback => {
+    const dbMatch = servicesDataSafe.find(s => {
+      const dbTitle = getBaseTitle(s.title);
+      const fbTitle = getBaseTitle(fallback.title);
+      return dbTitle.includes(fbTitle) || fbTitle.includes(dbTitle);
     });
+    
+    if (dbMatch) {
+      return {
+        title: dbMatch.title || fallback.title,
+        slug: dbMatch.slug || fallback.slug,
+        desc: dbMatch.desc || fallback.desc,
+        image_url: dbMatch.image_url || fallback.image_url
+      };
+    }
+    return fallback;
+  });
 
   // Also add any DB services that DON'T match a fallback (just in case new categories are added)
-  const unmatchedDbServices = servicesData?.filter(s => 
+  const unmatchedDbServices = servicesDataSafe.filter(s => 
     !fallbackServices.some(f => getBaseTitle(f.title) === getBaseTitle(s.title))
   ).map(s => ({
     title: s.title,
     slug: s.slug || s.title.toLowerCase().replace(/\s+/g, '-'),
     desc: s.desc || "",
     image_url: s.image_url
-  })) || [];
+  }));
 
   if (unmatchedDbServices.length > 0) {
     services.push(...unmatchedDbServices);
@@ -164,8 +166,10 @@ export default async function Home() {
     return indexA - indexB;
   });
 
-  const contactBg = bgsData?.find(b => b.category === 'contactBgs')?.image_url || "/freestocks-ux53SGpRAHU-unsplash.jpg";
-  const aboutBg2 = bgsData?.find(b => b.category === 'aboutBgs2')?.image_url || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg";
+  const bgsDataSafe = bgsData || [];
+
+  const contactBg = bgsDataSafe.find(b => b.category === 'contactBgs')?.image_url || "/freestocks-ux53SGpRAHU-unsplash.jpg";
+  const aboutBg2 = bgsDataSafe.find(b => b.category === 'aboutBgs2')?.image_url || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg";
   const fallbackTestimonials = [
     { 
       text: "I recently visited DC Studios for a photography session for my baby and the experience was excellent from start to finish. Friendly Environment: The studio has a warm and welcoming atmosphere. Mr. Dileep is approachable, patient, and made me and my family feel comfortable throughout the shoot. Professional Services: DC Studios offers a wide range of services including portrait photography, event coverage, product shoots, and editing packages. The photographers are skilled at guiding poses and using lighting creatively to bring out the best in every shot. Quality & Turnaround: The final images were crisp, well-edited, and delivered promptly. I appreciated the attention to detail in both the photography and post-production work. Value: Pricing felt fair compared to the quality of service. Packages are flexible, making it easy to choose what suits your needs. ✅ Overall: DC Studios combines professionalism with a friendly environment, making it a great choice for anyone looking for high-quality photography services in a comfortable setting.", 
@@ -217,14 +221,14 @@ export default async function Home() {
       </div>
       <AnimatedText text="We will make a wonderful story. Make a statement through every picture"  className="text-black w-full text-center text-4xl font-antic uppercase px-2 py-20 pb-30 md:hidden"/>
 
-      <HomePortfolioPreview galleryItems={galleryItems} bgItems={bgsData} />
+      <HomePortfolioPreview galleryItems={galleryItems} bgItems={bgsDataSafe} />
       <StatsSection />
       <WhyUs bgImage={contactBg} />
       <TestimonialSlider
         testimonials={reviews}
         staticImages={[
-          bgsData?.find(b => b.category === 'testimonials')?.image_url || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg",
-          bgsData?.find(b => b.category === 'testimonials2')?.image_url || "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg",
+          bgsDataSafe.find(b => b.category === 'testimonials')?.image_url || "/toa-heftiba-C-8uOz7GluA-unsplash.jpg",
+          bgsDataSafe.find(b => b.category === 'testimonials2')?.image_url || "/nihal-karkala-M5aSbOXeDyo-unsplash.jpg",
         ]}
       />
       <Contact bgImage={contactBg} />
