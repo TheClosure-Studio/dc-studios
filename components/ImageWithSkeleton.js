@@ -16,7 +16,7 @@ export default function ImageWithSkeleton({
   width,
   height,
   priority = false,
-  quality = 75,
+  quality = 50,
   sizes,
   loading = "lazy",
   skeletonClassName = "bg-neutral-100 animate-skeleton"

@@ -71,24 +71,28 @@ export default function BackgroundManagerClient({
     try {
       let fileToUpload = file;
       try {
-        const options = {
-          maxSizeMB: 1,
-          maxWidthOrHeight: 1920,
+        const compressionOptions = {
+          maxSizeMB: 0.8,
+          maxWidthOrHeight: 2560,
           useWebWorker: true,
+          fileType: 'image/webp',
         };
-        fileToUpload = await imageCompression(file, options);
-      } catch (err) {
-        console.error("Compression error:", err);
+        console.log('Original size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+        fileToUpload = await imageCompression(file, compressionOptions);
+        console.log('Compressed size:', (fileToUpload.size / 1024 / 1024).toFixed(2), 'MB');
+      } catch (compressionError) {
+        console.warn('Compression failed, uploading original:', compressionError);
+        fileToUpload = file;
       }
 
       const timeHash = Math.random().toString(36).substring(2, 8);
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
-      const filename = `bgs/${Date.now()}-${timeHash}-${safeName}`;
+      const originalSafeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
+      const filename = `bgs/${Date.now()}-${timeHash}-${originalSafeName.split('.')[0]}.webp`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('admin-uploads')
         .upload(filename, fileToUpload, {
-          contentType: fileToUpload.type,
+          contentType: 'image/webp',
           upsert: false
         });
 
@@ -219,7 +223,7 @@ export default function BackgroundManagerClient({
                 disabled={isUploading}
                 className="w-full bg-black text-white font-medium py-3 rounded-md hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isUploading ? 'Uploading...' : 'Upload Image'}
+                {isUploading ? 'Processing...' : 'Upload Image'}
               </button>
             </form>
           </div>

@@ -6,6 +6,7 @@ import { saveBackgroundRecord, deleteBackground } from '../actions/backgrounds';
 import { Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import imageCompression from 'browser-image-compression';
 
 const CATEGORY_OPTIONS = [
   { label: 'New Born',  value: 'newBorn' },
@@ -63,6 +64,9 @@ export default function BackgroundsClient({ allItems }) {
     setIsUploading(true);
     setError(null);
     setSuccess(false);
+    
+    // Check if compression is already happening (prevent double-click)
+    if (isUploading) return;
 
     const fileInput = e.currentTarget.querySelector('input[name="image"]');
     const file = fileInput?.files?.[0];
@@ -74,14 +78,33 @@ export default function BackgroundsClient({ allItems }) {
     }
 
     try {
+      // 1. COMPRESSION STEP
+      const compressionOptions = {
+        maxSizeMB: 0.8, // Target 800KB for safety
+        maxWidthOrHeight: 2560, // Max 2K resolution
+        useWebWorker: true,
+        fileType: 'image/webp', // Convert to WebP for massive savings
+      };
+
+      let fileToUpload = file;
+      try {
+        // Show status in console or eventually in UI if needed
+        console.log('Original size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+        fileToUpload = await imageCompression(file, compressionOptions);
+        console.log('Compressed size:', (fileToUpload.size / 1024 / 1024).toFixed(2), 'MB');
+      } catch (compressionError) {
+        console.warn('Compression failed, uploading original:', compressionError);
+        fileToUpload = file;
+      }
+
       const timeHash = Math.random().toString(36).substring(2, 8);
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
-      const filename = `bgs/${Date.now()}-${timeHash}-${safeName}`;
+      const originalSafeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
+      const filename = `bgs/${Date.now()}-${timeHash}-${originalSafeName.split('.')[0]}.webp`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('admin-uploads')
-        .upload(filename, file, {
-          contentType: file.type,
+        .upload(filename, fileToUpload, {
+          contentType: 'image/webp',
           upsert: false
         });
 
@@ -195,7 +218,7 @@ export default function BackgroundsClient({ allItems }) {
                 disabled={isUploading || !selectedCategory}
                 className="w-full bg-black text-white font-medium py-3 rounded-md hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isUploading ? 'Uploading...' : 'Upload Image'}
+                {isUploading ? 'Processing...' : 'Upload Image'}
               </button>
             </form>
           </div>

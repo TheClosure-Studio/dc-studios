@@ -25,12 +25,6 @@ export default function Hero({ images = [] }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Preload next image to eliminate transition stutter
-  useEffect(() => {
-    const nextIndex = (currentIndex + 1) % images.length;
-    const img = new window.Image();
-    img.src = images[nextIndex];
-  }, [currentIndex]);
 
   return (
     <section ref={containerRef} className="relative overflow-hidden bg-black min-h-screen flex flex-col pt-32 pb-4 md:pb-12">
@@ -53,7 +47,7 @@ export default function Hero({ images = [] }) {
               alt="Hero background image"
               fill
               priority={currentIndex === 0}
-              quality={90}
+              quality={70}
               sizes="100vw"
               className="object-cover object-center"
             />

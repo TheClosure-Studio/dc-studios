@@ -76,7 +76,7 @@ export default async function Home() {
     supabase.from('services').select('*').order('created_at', { ascending: false }),
     supabase.from('backgrounds').select('*'),
     supabase.from('reviews').select('*').order('date', { ascending: false }),
-    supabase.from('gallery_images').select('*').order('created_at', { ascending: false })
+    supabase.from('gallery_images').select('*').order('created_at', { ascending: false }).limit(20)
   ]);
 
   const fallbackHeroImages = [
